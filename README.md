@@ -2,38 +2,99 @@
 
 > **Bridging the trust gap in software hiring through verified, human-evaluated project profiles.**
 
+[![Internship](https://img.shields.io/badge/TechTalks-2026-blue)](https://techtalks.com/)
+[![Phase](https://img.shields.io/badge/Phase-02-purple)]()
+[![Status](https://img.shields.io/badge/Status-In%20Progress-yellow)]()
+
 ---
 
-## 📌 Overview
+## 📌 Project Overview
 
-**Skill Proof** is a web platform designed for the Lebanese tech ecosystem that replaces unverified traditional CVs with rubric-scored project profiles. It enables university students and recent software graduates to showcase their true technical capabilities while helping recruiters shortlist verified candidates faster and with greater confidence.
+**Skill Proof** is a web platform designed for the Lebanese tech ecosystem that replaces
+unverified traditional CVs with rubric-scored project profiles.
+
+It enables university students and recent software graduates to showcase their real
+technical capabilities while helping recruiters shortlist verified candidates faster
+and with greater confidence.
+
+### 🎯 The Problem
+
+Recruiters and small/mid-size employers in Lebanon struggle with screening junior
+developers efficiently, while students and recent graduates struggle to prove their
+actual abilities.
+
+Traditional CVs and GPAs often reveal little about real-world technical skills,
+project ownership, code quality, and problem-solving ability.
+
+### 💡 Our Solution
+
+Skill Proof allows candidates to build profiles around real completed projects.
+Each project can be evaluated by a named, credible technical verifier using a fixed
+rubric with written justifications.
+
+This gives recruiters evidence of a candidate's actual work before the interview.
+
+---
+
+## ✨ Approved MVP
+
+The MVP focuses on one main outcome:
+
+> **A recruiter can view a candidate's completed project together with a named
+> verifier's score and written justification, allowing them to make a more
+> confident decision than a CV alone would provide.**
+
+### Core Features
+
+- 👨‍💻 **Developer Project Profiles**
+  - Candidates create profiles around real completed projects.
+  - Projects provide evidence of actual technical work.
+
+- 📊 **Rubric-Based Evaluation**
+  - Named technical verifiers evaluate projects.
+  - Scores are based on a fixed rubric.
+  - Written justifications explain each evaluation.
+
+- 🔎 **Recruiter Discovery Dashboard**
+  - Recruiters can browse verified candidate profiles.
+  - Recruiters can filter candidates based on validated benchmarks.
+
+- 🤝 **Direct Connect Flow**
+  - Recruiters can express interest in candidates.
+  - Candidates can respond and connect directly.
+
+### 🚫 Out of Scope for V1
+
+The following features are intentionally excluded from the MVP:
+
+- AI-assisted grading
+- Employer-submitted project challenges
+- Payment processing
+- Partner bootcamps
+- Advanced or automated candidate matching
+
+These features may be considered after the MVP is validated with real recruiters.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** Next.js / React, Tailwind CSS
-- **Backend:** Node.js, Express API
-- **Database:** PostgreSQL
-- **Authentication:** Token-based authentication
-- **Hosting & Deployment:** Vercel
+| Area | Technology |
+|------|------------|
+| Frontend | Next.js / React |
+| Styling | Tailwind CSS |
+| Backend | Node.js / Express |
+| Database | PostgreSQL |
+| Authentication | Token-based authentication |
+| Deployment | Vercel |
 
 ---
 
-## ⚡ Core Features (V1 MVP)
-
-- **Developer Project Profiles:** Build verified profiles linked directly to real completed projects.
-- **Rubric-Based Evaluation:** Named, trusted technical verifiers score code quality, architecture, and documentation with written justifications.
-- **Recruiter Discovery Dashboard:** Filter and search candidate profiles based on validated technical benchmarks.
-- **Direct Connect Flow:** Recruiters can express interest and initiate contact directly with candidates.
-
----
-
-## 👥 Team Members
+## 👥 Team & Responsibilities
 
 | Name | Role / Focus Area |
-| :--- | :--- |
-| **Abdullah Mohammad Berro** | Team Lead / Full-Stack |
+|------|------------------|
+| **Abdullah Mohammad Berro** | Team Lead / Planning / Frontend / Backend |
 | **Abdallah Ahmad Khodor** | Backend Engineering |
 | **Ali Bakri** | Frontend Engineering |
 | **Youssef Dawoud** | Frontend Engineering |
@@ -46,7 +107,9 @@
 
 ### Prerequisites
 
-Ensure you have the following installed locally:
-- Node.js (`>= v18.x.x`)
+Make sure you have the following installed locally:
+
+- [Node.js](https://nodejs.org/) `>= v18.x.x`
 - npm
-- PostgreSQL instance running locally or hosted online
+- PostgreSQL
+- Git
