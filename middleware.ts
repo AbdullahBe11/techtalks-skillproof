@@ -8,7 +8,7 @@ const ROLE_ROUTES: Record<string, string> = {
   "/recruiter": "recruiter",
 }
 
-export const proxy = auth((req) => {
+export default auth((req) => {
   const { pathname } = req.nextUrl
   const session = req.auth
 
