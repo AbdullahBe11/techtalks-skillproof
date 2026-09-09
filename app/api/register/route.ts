@@ -30,10 +30,20 @@ export async function POST(request: Request) {
       )
     }
 
-    // 3. Basic password strength check
+    // 3. Basic password strength check — at least 8 characters, and not just
+    // digits (e.g. "12345678" must be rejected). Requiring both a letter and
+    // a number is a lightweight way to rule that out without being overly
+    // strict about symbols/casing for this MVP.
     if (password.length < 8) {
       return NextResponse.json(
         { error: "Password must be at least 8 characters." },
+        { status: 400 }
+      )
+    }
+
+    if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+      return NextResponse.json(
+        { error: "Password must contain both letters and numbers." },
         { status: 400 }
       )
     }
