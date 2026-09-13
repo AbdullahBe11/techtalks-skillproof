@@ -96,6 +96,9 @@ npm run dev
 ```
 
 ---
+## 🚢 Deployment
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for how to deploy to production, including why deploys are manual on this repo.
 
 # 🔄 Contribution Workflow
 
