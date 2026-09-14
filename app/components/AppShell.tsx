@@ -9,6 +9,37 @@ type NavLink = {
   href: string
 }
 
+// Small circular checkmark badge — shared with the sign-in/sign-up wordmark
+// and side panels, and the EmptyState component, so the SVG isn't duplicated.
+export function CheckBadge({
+  className = "w-5 h-5 bg-[#2F6F52]",
+  stroke = "#F6F4EE",
+  strokeWidth = 2.5,
+}: {
+  className?: string
+  stroke?: string
+  strokeWidth?: number
+}) {
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center justify-center rounded-full ${className}`}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        className="h-[60%] w-[60%]"
+        fill="none"
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M5 13l4 4L19 7" />
+      </svg>
+    </span>
+  )
+}
+
 const ROLE_NAV_LINKS: Record<string, NavLink[]> = {
   candidate: [{ label: "My projects", href: "/candidate/projects" }],
   recruiter: [{ label: "Browse candidates", href: "/recruiter/browse" }],
@@ -51,7 +82,7 @@ export default function AppShell({ role, userName, children }: AppShellProps) {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`text-sm pb-0.5 border-b ${
+                    className={`text-sm pb-0.5 border-b focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2 focus-visible:rounded-sm ${
                       active
                         ? "border-[#2F6F52] text-[#F6F4EE]"
                         : "border-transparent text-[#F6F4EE]/70 hover:text-[#F6F4EE]"
@@ -81,7 +112,7 @@ export default function AppShell({ role, userName, children }: AppShellProps) {
                 faded inactive nav links next to it. */}
             <button
               onClick={() => signOut()}
-              className="text-xs border border-[#F6F4EE]/35 rounded px-2.5 py-1.5 text-[#F6F4EE] hover:bg-[#F6F4EE]/10"
+              className="text-xs border border-[#F6F4EE]/35 rounded px-2.5 py-1.5 text-[#F6F4EE] hover:bg-[#F6F4EE]/10 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
             >
               Sign out
             </button>
