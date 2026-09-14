@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import { CheckBadge } from "./AppShell"
 
 type EmptyStateProps = {
@@ -29,12 +31,12 @@ export default function EmptyState({
         {description}
       </div>
       {ctaLabel && ctaHref && (
-        <a
+        <Link
           href={ctaHref}
           className="mt-1.5 text-[12.5px] text-[#2F6F52] font-medium border-b border-[#6FAE8E] pb-px no-underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
         >
           {ctaLabel}
-        </a>
+        </Link>
       )}
     </div>
   )
