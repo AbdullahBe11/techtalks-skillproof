@@ -1,8 +1,13 @@
+import EmptyState from "@/app/components/EmptyState"
+
 export default function CandidateProjectsPage() {
   return (
     <main>
       <h1>My Projects</h1>
-      <p>You have no projects yet.</p>
+      <EmptyState
+        headline="No projects yet"
+        description="Submit your first project to start building a verified profile."
+      />
     </main>
   )
 }
