@@ -134,6 +134,6 @@ implements only `users` and `profiles`; the remaining tables land in later sprin
 
 - [ ] Jamela Hallal
 - [ ] Jaafar Ali Khsheish
-- [ ] Abdallah Ahmad Khodor
+- [X] Abdallah Ahmad Khodor
 
 Sprint 01 code does not begin until all three boxes are checked.
