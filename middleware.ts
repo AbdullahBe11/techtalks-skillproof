@@ -22,12 +22,11 @@ export default auth((req) => {
     return NextResponse.next()
   }
 
-  // No session at all — reject (401), not a redirect
+  // No session at all — redirect to sign in, preserving the destination
   if (!session?.user) {
-    return NextResponse.json(
-      { error: "Unauthorized: please sign in." },
-      { status: 401 }
-    )
+    const signInUrl = new URL("/signin", req.url)
+    signInUrl.searchParams.set("callbackUrl", pathname)
+    return NextResponse.redirect(signInUrl)
   }
 
   const requiredRole = ROLE_ROUTES[matchedPrefix]

@@ -1,8 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { signIn, getSession } from "next-auth/react"
 
 type Role = "candidate" | "recruiter" | "verifier"
@@ -66,8 +66,23 @@ function useIsDesktop() {
   return isDesktop
 }
 
+// Only allow same-site relative paths as a callback target — reject anything
+// that could redirect off-site (protocol-relative "//", absolute URLs, etc).
+function isSafeCallbackUrl(url: string | null): url is string {
+  return !!url && url.startsWith("/") && !url.startsWith("//") && !url.startsWith("/\\")
+}
+
 export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignInForm />
+    </Suspense>
+  )
+}
+
+function SignInForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const isDesktop = useIsDesktop()
 
   const [email, setEmail] = useState("")
@@ -114,6 +129,12 @@ export default function SignInPage() {
       if (!result || result.error) {
         setFormError("Invalid email or password.")
         setSubmitting(false)
+        return
+      }
+
+      const callbackUrl = searchParams.get("callbackUrl")
+      if (isSafeCallbackUrl(callbackUrl)) {
+        router.push(callbackUrl)
         return
       }
 
