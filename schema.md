@@ -132,7 +132,7 @@ implements only `users` and `profiles`; the remaining tables land in later sprin
 
 ## Sign-off
 
-- [ ] Jamela Hallal
+- [X] Jamela Hallal
 - [ ] Jaafar Ali Khsheish
 - [X] Abdallah Ahmad Khodor
 
