@@ -81,6 +81,7 @@ model Evidence {
   type        EvidenceType
   evidenceUrl String      @map("evidence_url")
   createdAt   DateTime    @default(now()) @map("created_at")
+  shortLabel  String      @default("") @map("short_label")
   
   @@map("evidence")
 }
