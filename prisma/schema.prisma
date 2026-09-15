@@ -7,120 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          String      @id @default(uuid())
-  name        String
-  email       String      @unique
-  role        Role        @default(candidate)
-  password    String
-  phoneNumber String?     @map("phone_number")
-  createdAt   DateTime    @default(now()) @map("created_at")
-  interests   Interest[]
-  profile     Profile?
-  reviews     Review[]
-  shortLists  ShortList[]
-
-  @@map("users")
-}
-
-model Profile {
-  id         String      @id @default(uuid())
-  userId     String      @unique @map("user_id")
-  bio        String?
-  cvUrl      String?     @map("cv_url")
-  createdAt  DateTime    @default(now()) @map("created_at")
-  interests  Interest[]
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  projects   Project[]
-  shortLists ShortList[]
-
-  @@map("profiles")
-}
-
-model Project {
-  id             String       @id @default(uuid())
-  profileId      String       @map("profile_id")
-  title          String
-  description    String?
-  createdAt      DateTime     @default(now()) @map("created_at")
-  publishedState ProjectState @default(draft) @map("published_state")
-  evidence       Evidence[]
-  profile        Profile      @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  reviews        Review[]
-
-  @@map("projects")
-}
-
-model Evidence {
-  id          String       @id @default(uuid())
-  projectId   String       @map("project_id")
-  type        EvidenceType
-  evidenceUrl String       @map("evidence_url")
-  createdAt   DateTime     @default(now()) @map("created_at")
-  shortLabel  String       @map("short_label")
-  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@map("evidence")
-}
-
-model RubricCriterion {
-  id          String        @id @default(uuid())
-  name        String
-  description String?
-  maxScore    Int           @map("max_score")
-  scores      ReviewScore[]
-
-  @@map("rubric_criteria")
-}
-
-model Review {
-  id        String        @id @default(uuid())
-  projectId String        @map("project_id")
-  userId    String        @map("user_id")
-  verified  Boolean       @default(false)
-  createdAt DateTime      @default(now()) @map("created_at")
-  isVisible Boolean       @default(true) @map("is_visible")
-  project   Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  scores    ReviewScore[]
-
-  @@unique([projectId, userId])
-  @@map("reviews")
-}
-
-model ReviewScore {
-  reviewId    String          @map("review_id")
-  criterionId String          @map("criterion_id")
-  score       Int
-  criterion   RubricCriterion @relation(fields: [criterionId], references: [id], onDelete: Cascade)
-  review      Review          @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-
-  @@id([reviewId, criterionId])
-  @@map("reviews_scores")
-}
-
-model Interest {
-  userId    String   @map("user_id")
-  profileId String   @map("profile_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([userId, profileId])
-  @@map("interests")
-}
-
-model ShortList {
-  userId    String   @map("user_id")
-  profileId String   @map("profile_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([userId, profileId])
-  @@map("short_lists")
-}
-
 enum Role {
   candidate
   recruiter
@@ -139,4 +25,123 @@ enum EvidenceType {
   demo
   documentation
   other
+}
+
+model User {
+  id          String    @id @default(uuid())
+  name        String
+  email       String    @unique
+  role        Role      @default(candidate)
+  password    String
+  phoneNumber String?   @map("phone_number")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  profile     Profile?
+  reviews     Review[]
+  interests   Interest[]
+  shortLists  ShortList[]
+  
+  @@map("users")
+}
+
+model Profile {
+  id         String   @id @default(uuid())
+  userId     String   @unique @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio        String?
+  cvUrl      String?  @map("cv_url")
+  createdAt  DateTime @default(now()) @map("created_at")
+  
+  projects   Project[]
+  interests  Interest[]
+  shortLists ShortList[]
+  
+  @@map("profiles")
+}
+
+model Project {
+  id              String         @id @default(uuid())
+  profileId       String         @map("profile_id")
+  profile         Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title           String
+  description     String?
+  createdAt       DateTime       @default(now()) @map("created_at")
+  publishedState  ProjectState   @default(draft) @map("published_state")
+  
+  evidence        Evidence[]
+  reviews         Review[]
+  
+  @@map("projects")
+}
+
+model Evidence {
+  id          String      @id @default(uuid())
+  projectId   String      @map("project_id")
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type        EvidenceType
+  evidenceUrl String      @map("evidence_url")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  shortLabel  String      @default("") @map("short_label")
+  
+  @@map("evidence")
+}
+
+model RubricCriterion {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  maxScore    Int       @map("max_score")
+  
+  scores      ReviewScore[]
+  
+  @@map("rubric_criteria")
+}
+
+model Review {
+  id          String         @id @default(uuid())
+  projectId   String         @map("project_id")
+  project     Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId      String         @map("user_id")
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verified    Boolean        @default(false)
+  createdAt   DateTime       @default(now()) @map("created_at")
+  isVisible   Boolean        @default(true) @map("is_visible")
+  
+  scores      ReviewScore[]
+  
+  @@unique([projectId, userId])
+  @@map("reviews")
+}
+
+model ReviewScore {
+  reviewId    String         @map("review_id")
+  review      Review         @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  criterionId String         @map("criterion_id")
+  criterion   RubricCriterion @relation(fields: [criterionId], references: [id], onDelete: Cascade)
+  score       Int
+  
+  @@id([reviewId, criterionId])
+  @@map("reviews_scores")
+}
+
+model Interest {
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profileId  String   @map("profile_id")
+  profile    Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now()) @map("created_at")
+  
+  @@id([userId, profileId])
+  @@map("interests")
+}
+
+model ShortList {
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profileId  String   @map("profile_id")
+  profile    Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now()) @map("created_at")
+  
+  @@id([userId, profileId])
+  @@map("short_lists")
 }
