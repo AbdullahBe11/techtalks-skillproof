@@ -37,9 +37,6 @@ export async function GET(
       where: {
         id: projectId,
       },
-      include: {
-        evidence: true,
-      },
     })
 
     if (!project) {
@@ -74,7 +71,14 @@ export async function GET(
       )
     }
 
-    return NextResponse.json(project, { status: 200 })
+    // Only load the evidence once we know the candidate is allowed to see it
+    const evidence = await prisma.evidence.findMany({
+      where: {
+        projectId,
+      },
+    })
+
+    return NextResponse.json({ ...project, evidence }, { status: 200 })
   } catch (error) {
     console.error("Get project error:", error)
 
@@ -121,6 +125,13 @@ export async function PATCH(
     } catch {
       return NextResponse.json(
         { error: "Request body must be valid JSON." },
+        { status: 400 }
+      )
+    }
+
+    if (typeof body !== "object" || body === null || Array.isArray(body)) {
+      return NextResponse.json(
+        { error: "Request body must be a JSON object." },
         { status: 400 }
       )
     }
