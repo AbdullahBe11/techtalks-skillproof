@@ -54,6 +54,15 @@ export async function POST(
       )
     }
 
+    const allowedTypes = ["github", "demo", "documentation", "other"]
+
+    if (!allowedTypes.includes(type)) {
+      return NextResponse.json(
+        { error: "Invalid evidence type." },
+        { status: 400 }
+      )
+    }
+
     if (!shortLabel || typeof shortLabel !== "string") {
       return NextResponse.json(
         { error: "shortLabel is required." },
