@@ -149,6 +149,14 @@ export async function PATCH(
       )
     }
 
+    // Description, if provided, must be a string
+    if (description !== undefined && typeof description !== "string") {
+      return NextResponse.json(
+        { error: "Description must be a string." },
+        { status: 400 }
+      )
+    }
+
     // Find the project
     const project = await prisma.project.findUnique({
       where: {
@@ -196,8 +204,7 @@ export async function PATCH(
     }
 
     if (description !== undefined) {
-      data.description =
-        typeof description === "string" ? description.trim() || null : null
+      data.description = description.trim() || null
     }
 
     // Update the project
