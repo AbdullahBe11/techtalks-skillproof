@@ -38,6 +38,32 @@ function StatusTag({ state }: { state: ProjectSummary["publishedState"] }) {
   )
 }
 
+function PageHeader({ count }: { count?: number }) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h1
+          className="text-[20px] font-semibold text-[#16231F]"
+          style={serif}
+        >
+          My Projects
+        </h1>
+        {count !== undefined && (
+          <p className="mt-0.5 text-[12.5px] text-[#16231F]/55">
+            {count} {count === 1 ? "project" : "projects"}
+          </p>
+        )}
+      </div>
+      <Link
+        href="/candidate/projects/new"
+        className="rounded bg-[#16231F] px-3.5 py-2 text-[13px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+      >
+        + New project
+      </Link>
+    </div>
+  )
+}
+
 export default function CandidateProjectsPage() {
   const [projects, setProjects] = useState<ProjectSummary[] | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -77,9 +103,7 @@ export default function CandidateProjectsPage() {
   if (error) {
     return (
       <main>
-        <h1 className="text-[20px] font-semibold text-[#16231F]" style={serif}>
-          My Projects
-        </h1>
+        <PageHeader />
         <div
           role="alert"
           className="mt-4 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
@@ -93,9 +117,7 @@ export default function CandidateProjectsPage() {
   if (projects === null) {
     return (
       <main>
-        <h1 className="text-[20px] font-semibold text-[#16231F]" style={serif}>
-          My Projects
-        </h1>
+        <PageHeader />
         <p className="mt-4 text-[13px] text-[#16231F]/55">Loading…</p>
       </main>
     )
@@ -104,9 +126,7 @@ export default function CandidateProjectsPage() {
   if (projects.length === 0) {
     return (
       <main>
-        <h1 className="text-[20px] font-semibold text-[#16231F]" style={serif}>
-          My Projects
-        </h1>
+        <PageHeader count={0} />
         <EmptyState
           headline="No projects yet"
           description="Submit your first project to start building a verified profile."
@@ -117,25 +137,7 @@ export default function CandidateProjectsPage() {
 
   return (
     <main>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1
-            className="text-[20px] font-semibold text-[#16231F]"
-            style={serif}
-          >
-            My Projects
-          </h1>
-          <p className="mt-0.5 text-[12.5px] text-[#16231F]/55">
-            {projects.length} {projects.length === 1 ? "project" : "projects"}
-          </p>
-        </div>
-        <Link
-          href="/candidate/projects/new"
-          className="rounded bg-[#16231F] px-3.5 py-2 text-[13px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
-        >
-          + New project
-        </Link>
-      </div>
+      <PageHeader count={projects.length} />
 
       <ul className="mt-6 border-t border-[#D8D3C4]">
         {projects.map((project) => (
