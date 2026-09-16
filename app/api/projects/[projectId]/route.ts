@@ -89,6 +89,18 @@ export async function GET(
   }
 }
 
+// A candidate can only toggle between these two states through this route.
+// "archived" exists on ProjectState but isn't part of this action.
+const TOGGLE_STATES = ["draft", "published"] as const
+type ToggleState = (typeof TOGGLE_STATES)[number]
+
+function isToggleState(value: unknown): value is ToggleState {
+  return (
+    typeof value === "string" &&
+    (TOGGLE_STATES as readonly string[]).includes(value)
+  )
+}
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ projectId: string }> }
@@ -136,7 +148,7 @@ export async function PATCH(
       )
     }
 
-    const { title, description } = body
+    const { title, description, status } = body
 
     // Title, if provided, must not be empty
     if (
@@ -153,6 +165,14 @@ export async function PATCH(
     if (description !== undefined && typeof description !== "string") {
       return NextResponse.json(
         { error: "Description must be a string." },
+        { status: 400 }
+      )
+    }
+
+    // status, if provided, toggles publishedState between draft and published
+    if (status !== undefined && !isToggleState(status)) {
+      return NextResponse.json(
+        { error: "status must be 'draft' or 'published'." },
         { status: 400 }
       )
     }
@@ -196,8 +216,14 @@ export async function PATCH(
       )
     }
 
-    // Only update the fields that were actually provided
-    const data: { title?: string; description?: string | null } = {}
+    // Only update the fields that were actually provided. status only
+    // changes here, when the candidate explicitly sends it — nothing about
+    // evidence edits touches publishedState.
+    const data: {
+      title?: string
+      description?: string | null
+      publishedState?: ToggleState
+    } = {}
 
     if (title !== undefined) {
       data.title = title.trim()
@@ -205,6 +231,10 @@ export async function PATCH(
 
     if (description !== undefined) {
       data.description = description.trim() || null
+    }
+
+    if (status !== undefined) {
+      data.publishedState = status
     }
 
     // Update the project
