@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { getSession } from "next-auth/react"
 
 type EvidenceType = "github" | "demo" | "documentation" | "other"
 
@@ -51,6 +52,66 @@ function Spinner() {
   )
 }
 
+function EvidenceTypeIcon({ type }: { type: EvidenceType }) {
+  let path: React.ReactNode
+
+  switch (type) {
+    case "github":
+      path = (
+        <>
+          <path d="M9 6L4 12L9 18" />
+          <path d="M15 6L20 12L15 18" />
+        </>
+      )
+      break
+    case "demo":
+      path = (
+        <>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M10 8.5L16 12L10 15.5V8.5Z" fill="currentColor" />
+        </>
+      )
+      break
+    case "documentation":
+      path = (
+        <>
+          <path d="M7 3H14L18 7V21H7V3Z" />
+          <path d="M14 3V7H18" />
+          <path d="M9.5 12H15.5" />
+          <path d="M9.5 15.5H15.5" />
+        </>
+      )
+      break
+    case "other":
+      path = (
+        <>
+          <circle cx="12" cy="12" r="7" />
+          <circle cx="12" cy="12" r="1.6" fill="currentColor" />
+        </>
+      )
+      break
+  }
+
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2F6F52]/10 text-[#2F6F52]"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        className="h-3 w-3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {path}
+      </svg>
+    </span>
+  )
+}
+
 const inputBase =
   "w-full rounded border bg-[#F6F4EE] px-3 py-2.5 text-[14px] text-[#16231F] outline-none transition-colors placeholder:text-[#16231F]/35 focus:border-[#2F6F52] focus:ring-1 focus:ring-[#2F6F52]"
 
@@ -68,6 +129,65 @@ function isValidUrl(value: string) {
   } catch {
     return false
   }
+}
+
+function PreviewCard({
+  title,
+  publishedState,
+  evidence,
+  candidateName,
+}: {
+  title: string
+  publishedState: ProjectDetail["publishedState"]
+  evidence: Evidence[]
+  candidateName: string | null
+}) {
+  return (
+    <div className="mt-3 max-w-full overflow-hidden rounded border border-[#D8D3C4]">
+      <div className="flex flex-wrap items-center justify-between gap-2 bg-[#16231F] px-4 py-2.5 text-[#F6F4EE]">
+        <span className="font-mono text-[11px] tracking-wide text-[#F6F4EE]/55">
+          /profile/preview
+        </span>
+        <span
+          className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATUS_CLASS[publishedState]}`}
+        >
+          {publishedState === "draft"
+            ? "Draft — not visible yet"
+            : STATUS_LABEL[publishedState]}
+        </span>
+      </div>
+
+      <div className="p-4">
+        <h3
+          className="break-words text-[16px] font-semibold text-[#16231F]"
+          style={serif}
+        >
+          {title}
+        </h3>
+        <p className="mt-1 text-[12.5px] text-[#16231F]/55">
+          Submitted by {candidateName ?? "you"}
+        </p>
+
+        {evidence.length > 0 && (
+          <ul className="mt-3 flex flex-col gap-2">
+            {evidence.map((ev) => (
+              <li
+                key={ev.id}
+                className="flex items-center gap-2 text-[13px] text-[#16231F]"
+              >
+                <EvidenceTypeIcon type={ev.type} />
+                {ev.shortLabel}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <p className="mt-3 text-[12px] italic text-[#16231F]/50">
+          No verifier score yet — will appear here once reviewed.
+        </p>
+      </div>
+    </div>
+  )
 }
 
 export default function EditProjectPage() {
@@ -100,6 +220,12 @@ export default function EditProjectPage() {
   const [addingEvidence, setAddingEvidence] = useState(false)
   const [removingId, setRemovingId] = useState<string | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(
+    null
+  )
+
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [candidateName, setCandidateName] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -142,6 +268,18 @@ export default function EditProjectPage() {
       cancelled = true
     }
   }, [projectId])
+
+  useEffect(() => {
+    let cancelled = false
+
+    getSession().then((session) => {
+      if (!cancelled) setCandidateName(session?.user?.name ?? null)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   async function handleSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -245,6 +383,11 @@ export default function EditProjectPage() {
     } finally {
       setAddingEvidence(false)
     }
+  }
+
+  function confirmRemoveEvidence(evidenceId: string) {
+    setConfirmingDeleteId(null)
+    handleRemoveEvidence(evidenceId)
   }
 
   async function handleRemoveEvidence(evidenceId: string) {
@@ -428,8 +571,11 @@ export default function EditProjectPage() {
               className="flex flex-col gap-2 border-b border-[#D8D3C4] py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
             >
               <div className="flex min-w-0 items-center gap-3">
-                <span className="shrink-0 rounded-full border border-[#D8D3C4] px-2 py-0.5 text-[11px] font-medium capitalize text-[#16231F]/65">
-                  {ev.type}
+                <span className="inline-flex shrink-0 items-center gap-1.5">
+                  <EvidenceTypeIcon type={ev.type} />
+                  <span className="text-[11px] font-medium capitalize text-[#16231F]/65">
+                    {ev.type}
+                  </span>
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="text-[13.5px] font-medium text-[#16231F]">
@@ -440,14 +586,36 @@ export default function EditProjectPage() {
                   </div>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => handleRemoveEvidence(ev.id)}
-                disabled={removingId === ev.id}
-                className="shrink-0 self-start text-[12.5px] font-medium text-[#A8452E] hover:underline disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#A8452E] focus-visible:outline-offset-2 focus-visible:rounded-sm sm:self-auto"
-              >
-                {removingId === ev.id ? "Removing…" : "Remove"}
-              </button>
+              {confirmingDeleteId === ev.id ? (
+                <div className="flex shrink-0 flex-wrap items-center gap-2 self-start sm:self-auto">
+                  <span className="text-[12.5px] text-[#16231F]/70">
+                    Remove this link?
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => confirmRemoveEvidence(ev.id)}
+                    className="rounded border border-[#A8452E] px-2 py-1 text-[12px] font-medium text-[#A8452E] hover:bg-[#A8452E]/10 focus-visible:outline-2 focus-visible:outline-[#A8452E] focus-visible:outline-offset-2"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingDeleteId(null)}
+                    className="rounded border border-[#D8D3C4] px-2 py-1 text-[12px] font-medium text-[#16231F]/55 hover:bg-[#16231F]/5 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+                  >
+                    No
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirmingDeleteId(ev.id)}
+                  disabled={removingId === ev.id}
+                  className="shrink-0 self-start text-[12.5px] font-medium text-[#A8452E] hover:underline disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#A8452E] focus-visible:outline-offset-2 focus-visible:rounded-sm sm:self-auto"
+                >
+                  {removingId === ev.id ? "Removing…" : "Remove"}
+                </button>
+              )}
             </li>
           ))}
         </ul>
@@ -562,6 +730,28 @@ export default function EditProjectPage() {
           </button>
         </div>
       </form>
+
+      <hr className="my-7 border-[#D8D3C4]" />
+
+      <button
+        type="button"
+        onClick={() => setPreviewOpen((prev) => !prev)}
+        className="text-[13px] font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+        aria-expanded={previewOpen}
+      >
+        {previewOpen
+          ? "Hide preview"
+          : "Preview as recruiters will see it"}
+      </button>
+
+      {previewOpen && (
+        <PreviewCard
+          title={project.title}
+          publishedState={project.publishedState}
+          evidence={project.evidence}
+          candidateName={candidateName}
+        />
+      )}
 
       <Link
         href="/candidate/projects"
