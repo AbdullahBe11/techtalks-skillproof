@@ -99,6 +99,7 @@ export default function EditProjectPage() {
   )
   const [addingEvidence, setAddingEvidence] = useState(false)
   const [removingId, setRemovingId] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -238,6 +239,7 @@ export default function EditProjectPage() {
       setShortLabel("")
       setEvidenceUrl("")
       setEvidenceType("github")
+      setDeleteError(null)
     } catch {
       setEvidenceFormError("Something went wrong. Please try again.")
     } finally {
@@ -247,22 +249,34 @@ export default function EditProjectPage() {
 
   async function handleRemoveEvidence(evidenceId: string) {
     setRemovingId(evidenceId)
+    setDeleteError(null)
     try {
       const res = await fetch(
         `/api/projects/${projectId}/evidence/${evidenceId}`,
         { method: "DELETE" }
       )
 
-      if (res.ok) {
-        setProject((prev) =>
-          prev
-            ? {
-                ...prev,
-                evidence: prev.evidence.filter((ev) => ev.id !== evidenceId),
-              }
-            : prev
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setDeleteError(
+          (data as { error?: string }).error ??
+            "Something went wrong removing this evidence. Please try again."
         )
+        return
       }
+
+      setProject((prev) =>
+        prev
+          ? {
+              ...prev,
+              evidence: prev.evidence.filter((ev) => ev.id !== evidenceId),
+            }
+          : prev
+      )
+    } catch {
+      setDeleteError(
+        "Something went wrong removing this evidence. Please try again."
+      )
     } finally {
       setRemovingId(null)
     }
@@ -392,6 +406,15 @@ export default function EditProjectPage() {
       <h2 className="text-[16px] font-semibold text-[#16231F]" style={serif}>
         Evidence
       </h2>
+
+      {deleteError && (
+        <div
+          role="alert"
+          className="mt-3 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+        >
+          {deleteError}
+        </div>
+      )}
 
       {project.evidence.length === 0 ? (
         <p className="mt-3 text-[13px] text-[#16231F]/55">
