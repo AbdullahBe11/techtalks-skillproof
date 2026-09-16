@@ -223,6 +223,8 @@ export default function EditProjectPage() {
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(
     null
   )
+const [publishing, setPublishing] = useState(false)
+const [publishError, setPublishError] = useState<string | null>(null)
 
   const [previewOpen, setPreviewOpen] = useState(false)
   const [candidateName, setCandidateName] = useState<string | null>(null)
@@ -424,7 +426,39 @@ export default function EditProjectPage() {
       setRemovingId(null)
     }
   }
+async function handleTogglePublish() {
+  if (!project) return
+  const nextStatus =
+    project.publishedState === "published" ? "draft" : "published"
 
+  setPublishing(true)
+  setPublishError(null)
+  try {
+    const res = await fetch(`/api/projects/${projectId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: nextStatus }),
+    })
+
+    const data = await res.json().catch(() => ({}))
+
+    if (!res.ok) {
+      setPublishError(
+        (data as { error?: string }).error ??
+          "Something went wrong. Please try again."
+      )
+      return
+    }
+
+    setProject((prev) =>
+      prev ? { ...prev, publishedState: nextStatus } : prev
+    )
+  } catch {
+    setPublishError("Something went wrong. Please try again.")
+  } finally {
+    setPublishing(false)
+  }
+}
   if (loadError) {
     return (
       <main>
@@ -458,16 +492,41 @@ export default function EditProjectPage() {
 
   return (
     <main className="max-w-2xl">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-[20px] font-semibold text-[#16231F]" style={serif}>
           Edit Project
         </h1>
-        <span
-          className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11.5px] font-medium ${STATUS_CLASS[project.publishedState]}`}
-        >
-          {STATUS_LABEL[project.publishedState]}
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11.5px] font-medium ${STATUS_CLASS[project.publishedState]}`}
+          >
+            {STATUS_LABEL[project.publishedState]}
+          </span>
+          {project.publishedState !== "archived" && (
+            <button
+              type="button"
+              onClick={handleTogglePublish}
+              disabled={publishing}
+              className="rounded border border-[#2F6F52] px-3 py-1 text-[12.5px] font-medium text-[#2F6F52] transition-colors hover:bg-[#2F6F52]/10 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+            >
+              {publishing
+                ? "Working…"
+                : project.publishedState === "published"
+                ? "Revert to draft"
+                : "Publish"}
+            </button>
+          )}
+        </div>
       </div>
+
+      {publishError && (
+        <div
+          role="alert"
+          className="mt-3 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+        >
+          {publishError}
+        </div>
+      )}
 
       {saveError && (
         <div
