@@ -133,7 +133,7 @@ implements only `users` and `profiles`; the remaining tables land in later sprin
 ## Sign-off
 
 - [X] Jamela Hallal
-- [ ] Jaafar Ali Khsheish
+- [X] Jaafar Ali Khsheish
 - [X] Abdallah Ahmad Khodor
 
 Sprint 01 code does not begin until all three boxes are checked.
