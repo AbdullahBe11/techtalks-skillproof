@@ -8,7 +8,7 @@ export default async function Home() {
     redirect("/signin")
   }
 
-  const role = (session.user as any).role//get their role if they have one
+  const role = (session.user as { role?: string }).role//get their role if they have one
 
   switch (role) { //redirect them to the page based on there role
     case "candidate":
