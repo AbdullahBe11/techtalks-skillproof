@@ -141,16 +141,16 @@ export default function CandidateProjectsPage() {
         {projects.map((project) => (
           <li
             key={project.id}
-            className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D8D3C4] py-3.5"
+            className="flex flex-col gap-1.5 border-b border-[#D8D3C4] py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2"
           >
             <Link
               href={`/candidate/projects/${project.id}`}
-              className="text-[14.5px] font-medium text-[#16231F] no-underline hover:text-[#2F6F52] focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+              className="break-words text-[14.5px] font-medium text-[#16231F] no-underline hover:text-[#2F6F52] focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
               style={serif}
             >
               {project.title}
             </Link>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <span className="text-[12.5px] text-[#16231F]/55">
                 {project.evidenceCount}{" "}
                 {project.evidenceCount === 1

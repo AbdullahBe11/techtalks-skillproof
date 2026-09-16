@@ -402,17 +402,17 @@ export default function EditProjectPage() {
           {project.evidence.map((ev) => (
             <li
               key={ev.id}
-              className="flex items-center justify-between gap-3 border-b border-[#D8D3C4] py-3"
+              className="flex flex-col gap-2 border-b border-[#D8D3C4] py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
             >
               <div className="flex min-w-0 items-center gap-3">
                 <span className="shrink-0 rounded-full border border-[#D8D3C4] px-2 py-0.5 text-[11px] font-medium capitalize text-[#16231F]/65">
                   {ev.type}
                 </span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="text-[13.5px] font-medium text-[#16231F]">
                     {ev.shortLabel}
                   </div>
-                  <div className="max-w-[320px] overflow-hidden text-ellipsis whitespace-nowrap text-[12px] text-[#16231F]/55">
+                  <div className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-[12px] text-[#16231F]/55 sm:max-w-[320px]">
                     {ev.evidenceUrl}
                   </div>
                 </div>
@@ -421,7 +421,7 @@ export default function EditProjectPage() {
                 type="button"
                 onClick={() => handleRemoveEvidence(ev.id)}
                 disabled={removingId === ev.id}
-                className="shrink-0 text-[12.5px] font-medium text-[#A8452E] hover:underline disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#A8452E] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                className="shrink-0 self-start text-[12.5px] font-medium text-[#A8452E] hover:underline disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#A8452E] focus-visible:outline-offset-2 focus-visible:rounded-sm sm:self-auto"
               >
                 {removingId === ev.id ? "Removing…" : "Remove"}
               </button>
@@ -526,7 +526,7 @@ export default function EditProjectPage() {
           <button
             type="submit"
             disabled={addingEvidence}
-            className="rounded bg-[#16231F] px-4 py-2.5 text-[14px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+            className="w-full rounded bg-[#16231F] px-4 py-2.5 text-[14px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2 sm:w-auto"
           >
             {addingEvidence ? (
               <span className="inline-flex items-center justify-center gap-2">
