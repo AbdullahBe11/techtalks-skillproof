@@ -4,31 +4,20 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 
 import EmptyState from "@/app/components/EmptyState"
+import { STATUS_CLASS, STATUS_LABEL, type ProjectStatus } from "./status"
 
 type ProjectSummary = {
   id: string
   title: string
   description: string | null
-  publishedState: "draft" | "published" | "archived"
+  publishedState: ProjectStatus
   createdAt: string
   evidenceCount: number
 }
 
 const serif = { fontFamily: "var(--font-serif, Georgia, serif)" } as const
 
-const STATUS_LABEL: Record<ProjectSummary["publishedState"], string> = {
-  draft: "Draft",
-  published: "Published",
-  archived: "Archived",
-}
-
-const STATUS_CLASS: Record<ProjectSummary["publishedState"], string> = {
-  draft: "bg-[#B8862F]/10 text-[#B8862F] border-[#B8862F]/30",
-  published: "bg-[#3D5A73]/10 text-[#3D5A73] border-[#3D5A73]/30",
-  archived: "bg-[#16231F]/5 text-[#16231F]/55 border-[#D8D3C4]",
-}
-
-function StatusTag({ state }: { state: ProjectSummary["publishedState"] }) {
+function StatusTag({ state }: { state: ProjectStatus }) {
   return (
     <span
       className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11.5px] font-medium ${STATUS_CLASS[state]}`}

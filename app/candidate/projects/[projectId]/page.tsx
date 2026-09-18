@@ -5,6 +5,8 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { getSession } from "next-auth/react"
 
+import { STATUS_CLASS, STATUS_LABEL, type ProjectStatus } from "../status"
+
 type EvidenceType = "github" | "demo" | "documentation" | "other"
 
 type Evidence = {
@@ -18,7 +20,7 @@ type ProjectDetail = {
   id: string
   title: string
   description: string | null
-  publishedState: "draft" | "published" | "archived"
+  publishedState: ProjectStatus
   evidence: Evidence[]
 }
 
@@ -30,18 +32,6 @@ const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string }[] = [
   { value: "documentation", label: "Documentation" },
   { value: "other", label: "Other" },
 ]
-
-const STATUS_LABEL: Record<ProjectDetail["publishedState"], string> = {
-  draft: "Draft",
-  published: "Published",
-  archived: "Archived",
-}
-
-const STATUS_CLASS: Record<ProjectDetail["publishedState"], string> = {
-  draft: "bg-[#B8862F]/10 text-[#B8862F] border-[#B8862F]/30",
-  published: "bg-[#3D5A73]/10 text-[#3D5A73] border-[#3D5A73]/30",
-  archived: "bg-[#16231F]/5 text-[#16231F]/55 border-[#D8D3C4]",
-}
 
 function Spinner({
   className = "border-[#F6F4EE]/35 border-t-[#F6F4EE]",
