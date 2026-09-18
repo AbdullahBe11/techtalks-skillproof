@@ -504,7 +504,7 @@ export default function SignUpPage() {
                           <span className="h-1.5 w-1.5 rounded-full bg-[#2F6F52]" />
                         )}
                       </span>
-                      <span className="flex flex-col pr-6">
+                      <span className="flex flex-col">
                         <span
                           className="text-[14.5px] font-medium text-[#16231F]"
                           style={serif}
@@ -518,11 +518,6 @@ export default function SignUpPage() {
                           {opt.description}
                         </span>
                       </span>
-                      {selected && (
-                        <span className="absolute right-3 top-3">
-                          <CheckBadge />
-                        </span>
-                      )}
                     </label>
                   )
                 })}
