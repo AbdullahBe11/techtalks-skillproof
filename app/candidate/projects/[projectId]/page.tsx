@@ -5,6 +5,8 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { getSession } from "next-auth/react"
 
+import { STATUS_CLASS, STATUS_LABEL, type ProjectStatus } from "../status"
+
 type EvidenceType = "github" | "demo" | "documentation" | "other"
 
 type Evidence = {
@@ -18,7 +20,7 @@ type ProjectDetail = {
   id: string
   title: string
   description: string | null
-  publishedState: "draft" | "published" | "archived"
+  publishedState: ProjectStatus
   evidence: Evidence[]
 }
 
@@ -31,23 +33,15 @@ const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string }[] = [
   { value: "other", label: "Other" },
 ]
 
-const STATUS_LABEL: Record<ProjectDetail["publishedState"], string> = {
-  draft: "Draft",
-  published: "Published",
-  archived: "Archived",
-}
-
-const STATUS_CLASS: Record<ProjectDetail["publishedState"], string> = {
-  draft: "bg-[#B8862F]/10 text-[#B8862F] border-[#B8862F]/30",
-  published: "bg-[#2F6F52]/10 text-[#2F6F52] border-[#2F6F52]/30",
-  archived: "bg-[#16231F]/5 text-[#16231F]/55 border-[#D8D3C4]",
-}
-
-function Spinner() {
+function Spinner({
+  className = "border-[#F6F4EE]/35 border-t-[#F6F4EE]",
+}: {
+  className?: string
+}) {
   return (
     <span
       aria-hidden="true"
-      className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#F6F4EE]/35 border-t-[#F6F4EE]"
+      className={`h-3.5 w-3.5 animate-spin rounded-full border-2 ${className}`}
     />
   )
 }
@@ -223,8 +217,10 @@ export default function EditProjectPage() {
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(
     null
   )
-const [publishing, setPublishing] = useState(false)
-const [publishError, setPublishError] = useState<string | null>(null)
+
+  const [publishing, setPublishing] = useState(false)
+  const [publishError, setPublishError] = useState<string | null>(null)
+  const [confirmingPublish, setConfirmingPublish] = useState(false)
 
   const [previewOpen, setPreviewOpen] = useState(false)
   const [candidateName, setCandidateName] = useState<string | null>(null)
@@ -426,39 +422,59 @@ const [publishError, setPublishError] = useState<string | null>(null)
       setRemovingId(null)
     }
   }
-async function handleTogglePublish() {
-  if (!project) return
-  const nextStatus =
-    project.publishedState === "published" ? "draft" : "published"
 
-  setPublishing(true)
-  setPublishError(null)
-  try {
-    const res = await fetch(`/api/projects/${projectId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: nextStatus }),
-    })
+  async function togglePublish(nextStatus: "draft" | "published") {
+    setPublishing(true)
+    setPublishError(null)
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: nextStatus }),
+      })
 
-    const data = await res.json().catch(() => ({}))
+      const data = await res.json().catch(() => ({}))
 
-    if (!res.ok) {
-      setPublishError(
-        (data as { error?: string }).error ??
-          "Something went wrong. Please try again."
+      if (!res.ok) {
+        setPublishError(
+          (data as { error?: string }).error ??
+            "Something went wrong. Please try again."
+        )
+        return
+      }
+
+      setProject((prev) =>
+        prev ? { ...prev, publishedState: nextStatus } : prev
       )
+    } catch {
+      setPublishError("Something went wrong. Please try again.")
+    } finally {
+      setPublishing(false)
+    }
+  }
+
+  function handlePublishClick() {
+    if (!project) return
+    setPublishError(null)
+
+    if (project.publishedState === "published") {
+      togglePublish("draft")
       return
     }
 
-    setProject((prev) =>
-      prev ? { ...prev, publishedState: nextStatus } : prev
-    )
-  } catch {
-    setPublishError("Something went wrong. Please try again.")
-  } finally {
-    setPublishing(false)
+    if (project.evidence.length === 0) {
+      setConfirmingPublish(true)
+      return
+    }
+
+    togglePublish("published")
   }
-}
+
+  function confirmPublishAnyway() {
+    setConfirmingPublish(false)
+    togglePublish("published")
+  }
+
   if (loadError) {
     return (
       <main>
@@ -492,7 +508,7 @@ async function handleTogglePublish() {
 
   return (
     <main className="max-w-2xl">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-[20px] font-semibold text-[#16231F]" style={serif}>
           Edit Project
         </h1>
@@ -502,22 +518,52 @@ async function handleTogglePublish() {
           >
             {STATUS_LABEL[project.publishedState]}
           </span>
-          {project.publishedState !== "archived" && (
+          {project.publishedState !== "archived" && !confirmingPublish && (
             <button
               type="button"
-              onClick={handleTogglePublish}
+              onClick={handlePublishClick}
               disabled={publishing}
               className="rounded border border-[#2F6F52] px-3 py-1 text-[12.5px] font-medium text-[#2F6F52] transition-colors hover:bg-[#2F6F52]/10 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
             >
-              {publishing
-                ? "Working…"
-                : project.publishedState === "published"
-                ? "Revert to draft"
-                : "Publish"}
+              {publishing ? (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Spinner className="border-[#2F6F52]/35 border-t-[#2F6F52]" />
+                  {project.publishedState === "published"
+                    ? "Unpublishing…"
+                    : "Publishing…"}
+                </span>
+              ) : project.publishedState === "published" ? (
+                "Unpublish"
+              ) : (
+                "Publish"
+              )}
             </button>
           )}
         </div>
       </div>
+
+      {confirmingPublish && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 rounded border border-[#D8D3C4] px-3 py-2.5">
+          <span className="text-[12.5px] text-[#16231F]/70">
+            This project has no evidence attached — recruiters won&apos;t
+            have anything to review. Publish anyway?
+          </span>
+          <button
+            type="button"
+            onClick={confirmPublishAnyway}
+            className="rounded border border-[#2F6F52] px-2 py-1 text-[12px] font-medium text-[#2F6F52] hover:bg-[#2F6F52]/10 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+          >
+            Publish anyway
+          </button>
+          <button
+            type="button"
+            onClick={() => setConfirmingPublish(false)}
+            className="rounded border border-[#D8D3C4] px-2 py-1 text-[12px] font-medium text-[#16231F]/55 hover:bg-[#16231F]/5 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
 
       {publishError && (
         <div
