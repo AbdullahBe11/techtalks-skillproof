@@ -76,6 +76,18 @@ function CheckBadge({
   )
 }
 
+// Small spinning ring for the submit button's loading state. Sized to sit
+// inline with the button text; inherits the button's text color via
+// currentColor-style hardcoding since the button is always on the dark bg.
+function Spinner() {
+  return (
+    <span
+      aria-hidden="true"
+      className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#F6F4EE]/35 border-t-[#F6F4EE]"
+    />
+  )
+}
+
 // The dark side panel is only mounted at/above the `sm` breakpoint (640px).
 // Below that it is never rendered, keeping the mobile DOM to just the form.
 function useIsDesktop() {
@@ -242,12 +254,12 @@ export default function SignUpPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F6F4EE] px-4 py-10">
       <div
-        className={`w-full overflow-hidden rounded-md border border-[#D8D3C4] shadow-sm ${
-          isDesktop ? "grid max-w-4xl grid-cols-2" : "max-w-[400px]"
+        className={`w-full max-h-[90vh] overflow-hidden rounded-md border border-[#D8D3C4] shadow-sm ${
+          isDesktop ? "flex max-w-4xl" : "flex flex-col max-w-[400px]"
         }`}
       >
         {isDesktop && (
-          <aside className="flex flex-col justify-between bg-[#16231F] p-8 text-[#F6F4EE]">
+          <aside className="flex w-1/2 shrink-0 flex-col justify-between overflow-hidden bg-[#16231F] p-7 text-[#F6F4EE]">
             <div>
               <div className="flex items-center gap-2">
                 <CheckBadge />
@@ -257,7 +269,7 @@ export default function SignUpPage() {
               </div>
 
               <blockquote
-                className="mt-10 text-[22px] leading-snug text-[#F6F4EE]"
+                className="mt-6 text-[22px] leading-snug text-[#F6F4EE]"
                 style={serif}
               >
                 &ldquo;A one-page resume doesn&rsquo;t prove{" "}
@@ -271,11 +283,11 @@ export default function SignUpPage() {
               </p>
             </div>
 
-            <div className="mt-10 border-t border-[#F6F4EE]/15 pt-6">
+            <div className="mt-5 border-t border-[#F6F4EE]/15 pt-3.5">
               <p className="text-xs tracking-wide text-[#F6F4EE]/50">
                 EVERY PROJECT IS SCORED ON
               </p>
-              <ul className="mt-3 flex flex-col gap-2.5">
+              <ul className="mt-2 flex flex-col gap-1.5">
                 {["Code quality", "Ownership", "Communication"].map((item) => (
                   <li
                     key={item}
@@ -294,7 +306,7 @@ export default function SignUpPage() {
           </aside>
         )}
 
-        <div className="bg-[#F6F4EE] p-7 sm:p-8">
+        <div className="min-h-0 w-full overflow-y-auto bg-[#F6F4EE] p-7 sm:w-1/2">
           <div className="flex items-center justify-center gap-2">
             <CheckBadge />
             <span
@@ -309,7 +321,7 @@ export default function SignUpPage() {
           </p>
 
           <h1
-            className="mt-6 text-[18px] font-semibold text-[#16231F]"
+            className="mt-3.5 text-[18px] font-semibold text-[#16231F]"
             style={serif}
           >
             Create your account
@@ -325,7 +337,7 @@ export default function SignUpPage() {
           )}
 
           <form
-            className="mt-6 flex flex-col gap-4"
+            className="mt-3.5 flex flex-col gap-[13px]"
             onSubmit={handleSubmit}
             noValidate
             aria-busy={submitting}
@@ -377,7 +389,10 @@ export default function SignUpPage() {
                   {emailTaken && (
                     <>
                       {" "}
-                      <Link href="/signin" className="font-medium underline">
+                      <Link
+                        href="/signin"
+                        className="font-medium underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                      >
                         Try signing in instead.
                       </Link>
                     </>
@@ -462,7 +477,7 @@ export default function SignUpPage() {
                   return (
                     <label
                       key={opt.value}
-                      className={`relative flex cursor-pointer items-start gap-2.5 rounded border px-3 py-2.5 transition-colors focus-within:ring-1 focus-within:ring-[#2F6F52] ${
+                      className={`relative flex cursor-pointer items-start gap-2.5 rounded border px-3 py-2.5 transition-colors focus-within:ring-1 focus-within:ring-[#2F6F52] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-[#2F6F52] has-[:focus-visible]:outline-offset-2 ${
                         selected
                           ? "border-[#2F6F52] bg-[#2F6F52]/5"
                           : "border-[#D8D3C4] hover:border-[#6FAE8E]"
@@ -489,7 +504,7 @@ export default function SignUpPage() {
                           <span className="h-1.5 w-1.5 rounded-full bg-[#2F6F52]" />
                         )}
                       </span>
-                      <span className="flex flex-col pr-7">
+                      <span className="flex flex-col">
                         <span
                           className="text-[14.5px] font-medium text-[#16231F]"
                           style={serif}
@@ -503,11 +518,6 @@ export default function SignUpPage() {
                           {opt.description}
                         </span>
                       </span>
-                      {selected && (
-                        <span className="absolute right-3 top-3">
-                          <CheckBadge />
-                        </span>
-                      )}
                     </label>
                   )
                 })}
@@ -520,9 +530,16 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="mt-1 w-full rounded bg-[#16231F] py-3 text-[14px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-1 w-full rounded bg-[#16231F] py-3 text-[14px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
             >
-              {submitting ? "Creating account…" : "Create account"}
+              {submitting ? (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Spinner />
+                  Creating account…
+                </span>
+              ) : (
+                "Create account"
+              )}
             </button>
           </form>
 
@@ -530,7 +547,7 @@ export default function SignUpPage() {
             Already have an account?{" "}
             <Link
               href="/signin"
-              className="font-medium text-[#2F6F52] hover:underline"
+              className="font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
             >
               Sign in
             </Link>

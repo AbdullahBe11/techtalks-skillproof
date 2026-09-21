@@ -1,0 +1,1 @@
+﻿ALTER TABLE "evidence" ADD COLUMN "short_label" TEXT NOT NULL DEFAULT '';
