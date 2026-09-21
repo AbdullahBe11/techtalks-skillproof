@@ -16,6 +16,7 @@ implements only `users` and `profiles`; the remaining tables land in later sprin
 | `role` | `CANDIDATE`, `RECRUITER`, `VERIFIER`, `ADMIN` |
 | `publish_state` | `DRAFT`, `PUBLISHED`, `ARCHIVED` |
 | `evidence_type` | `GITHUB`, `DEMO`, `DOCUMENTATION`, `OTHER` |
+| `verification_status` | `PENDING`, `VERIFIED`, `REJECTED` |
 
 ---
 
@@ -50,6 +51,8 @@ implements only `users` and `profiles`; the remaining tables land in later sprin
 | `description` | text | |
 | `created_at` | timestamp | default now() |
 | `published_state` | `publish_state` enum | default `DRAFT` |
+| `verification_status` | `verification_status` enum | default `PENDING` |
+| `reviewer_feedback` | text | optional |
 
 ### `evidence`
 | Column | Type | Constraints |
