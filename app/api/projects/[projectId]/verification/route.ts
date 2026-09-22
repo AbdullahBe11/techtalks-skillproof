@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
-import { PrismaClient, VerificationStatus } from "@prisma/client"
+import { VerificationStatus } from "@prisma/client"
+import { prisma } from "@/lib/prisma"
 
-const prisma = new PrismaClient()
 
 export async function PATCH(
   request: Request,
