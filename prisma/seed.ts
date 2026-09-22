@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma"
 
 // Fictional test accounts (no real person data)
 const SEED_DATA = {
