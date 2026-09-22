@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useSyncExternalStore } from "react"
+import type { ReactNode } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 
@@ -78,7 +79,7 @@ function Spinner({
 }
 
 function EvidenceTypeIcon({ type }: { type: EvidenceType }) {
-  let path: React.ReactNode
+  let path: ReactNode
 
   switch (type) {
     case "github":
@@ -181,7 +182,7 @@ function FadeUp({
   delayMs: number
   reducedMotion: boolean
   className?: string
-  children: React.ReactNode
+  children: ReactNode
 }) {
   const [entered, setEntered] = useState(false)
 
