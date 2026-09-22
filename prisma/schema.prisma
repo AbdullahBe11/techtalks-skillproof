@@ -20,6 +20,12 @@ enum ProjectState {
   archived
 }
 
+enum VerificationStatus {
+  pending
+  verified
+  rejected
+}
+
 enum EvidenceType {
   github
   demo
@@ -67,6 +73,8 @@ model Project {
   description     String?
   createdAt       DateTime       @default(now()) @map("created_at")
   publishedState  ProjectState   @default(draft) @map("published_state")
+  verificationStatus VerificationStatus @default(pending) @map("verification_status")
+  reviewerFeedback   String?            @map("reviewer_feedback")
   
   evidence        Evidence[]
   reviews         Review[]
