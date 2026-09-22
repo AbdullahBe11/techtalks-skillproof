@@ -30,7 +30,7 @@ export default auth((req) => {
   }
 
   const requiredRole = ROLE_ROUTES[matchedPrefix]
-  const userRole = (session.user as any).role
+ const userRole = (session.user as { role?: string }).role
 
   // Signed in, but wrong role — reject (403), enforced server-side
   if (userRole !== requiredRole) {
