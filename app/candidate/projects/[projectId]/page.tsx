@@ -5,7 +5,14 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { getSession } from "next-auth/react"
 
-import { STATUS_CLASS, STATUS_LABEL, type ProjectStatus } from "../status"
+import {
+  STATUS_CLASS,
+  STATUS_LABEL,
+  VERIFICATION_STATUS_CLASS,
+  VERIFICATION_STATUS_LABEL,
+  type ProjectStatus,
+  type VerificationStatus,
+} from "../status"
 
 type EvidenceType = "github" | "demo" | "documentation" | "other"
 
@@ -21,9 +28,10 @@ type ProjectDetail = {
   title: string
   description: string | null
   publishedState: ProjectStatus
+  verificationStatus: VerificationStatus
+  reviewerFeedback: string | null
   evidence: Evidence[]
 }
-
 const serif = { fontFamily: "var(--font-serif, Georgia, serif)" } as const
 
 const EVIDENCE_TYPE_OPTIONS: { value: EvidenceType; label: string }[] = [
@@ -513,12 +521,19 @@ export default function EditProjectPage() {
           Edit Project
         </h1>
         <div className="flex items-center gap-2">
-          <span
-            className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11.5px] font-medium ${STATUS_CLASS[project.publishedState]}`}
-          >
-            {STATUS_LABEL[project.publishedState]}
-          </span>
-          {project.publishedState !== "archived" && !confirmingPublish && (
+  <span
+    className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11.5px] font-medium ${STATUS_CLASS[project.publishedState]}`}
+  >
+    {STATUS_LABEL[project.publishedState]}
+  </span>
+
+  <span
+    className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11.5px] font-medium ${VERIFICATION_STATUS_CLASS[project.verificationStatus]}`}
+  >
+    Verification: {VERIFICATION_STATUS_LABEL[project.verificationStatus]}
+  </span>
+
+  {project.publishedState !== "archived" && !confirmingPublish && (
             <button
               type="button"
               onClick={handlePublishClick}
@@ -582,6 +597,37 @@ export default function EditProjectPage() {
           {saveError}
         </div>
       )}
+
+{project.reviewerFeedback && (
+  <section className="mt-4 rounded border border-[#D8D3C4] bg-[#16231F]/[0.03] p-4">
+    <h2
+      className="text-[15px] font-semibold text-[#16231F]"
+      style={serif}
+    >
+      Reviewer feedback
+    </h2>
+
+    <p className="mt-2 whitespace-pre-wrap text-[13px] leading-6 text-[#16231F]/70">
+      {project.reviewerFeedback}
+    </p>
+  </section>
+)}
+
+{project.verificationStatus === "rejected" && (
+  <div
+    role="alert"
+    className="mt-4 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-4 py-3"
+  >
+    <p className="text-[13px] font-semibold text-[#A8452E]">
+      This project was rejected.
+    </p>
+
+    <p className="mt-1 text-[12.5px] leading-5 text-[#16231F]/70">
+      Review the feedback, make the necessary changes to your project,
+      and submit it again for verification.
+    </p>
+  </div>
+)}
 
       <form
         className="mt-5 flex flex-col gap-[13px]"
