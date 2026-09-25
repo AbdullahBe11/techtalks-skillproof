@@ -137,6 +137,15 @@ export async function PATCH(request: Request) {
             { status: 400 }
           )
         }
+
+        // Reject non-http(s) schemes (e.g. `javascript:`) that `new URL()`
+        // parses successfully but are never legitimate CV links.
+        if (!/^https?:\/\//i.test(cvUrl.trim())) {
+          return NextResponse.json(
+            { error: "CV link must be a valid http or https URL." },
+            { status: 400 }
+          )
+        }
       }
     }
 
