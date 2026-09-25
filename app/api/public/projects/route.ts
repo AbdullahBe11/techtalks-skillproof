@@ -11,6 +11,7 @@ export async function GET(request: Request) {
     const projects = await prisma.project.findMany({
       where: {
         verificationStatus: "verified",
+        publishedState: "published",
         ...(search
           ? {
               OR: [
