@@ -14,11 +14,6 @@ type PublicProject = {
   description: string | null
 }
 
-type PublicProjectsResponse = {
-  projects: PublicProject[]
-  nextCursor: string | null
-}
-
 type DisplayRow = PublicProject & {
   included: boolean
   entering: boolean
@@ -219,7 +214,7 @@ export default function PublicProjectsPage() {
           ? `/api/public/projects?search=${encodeURIComponent(debouncedQuery)}`
           : "/api/public/projects"
         const res = await fetch(url)
-        const data = await res.json().catch(() => ({ projects: [], nextCursor: null }))
+        const data = await res.json().catch(() => [])
 
         if (cancelled || requestId !== requestIdRef.current) return
 
@@ -233,7 +228,7 @@ export default function PublicProjectsPage() {
         }
 
         setError(null)
-        setResults((data as PublicProjectsResponse).projects)
+        setResults(data as PublicProject[])
         setInitialLoading(false)
       } catch {
         if (cancelled || requestId !== requestIdRef.current) return
