@@ -214,12 +214,18 @@ export async function PATCH(
       )
     }
 
+    const hasContentChange =
+  (title !== undefined && title.trim() !== project.title) ||
+  (description !== undefined &&
+    (description.trim() || null) !== project.description)
+
     // Only update the fields that were actually provided. status only
     // changes here, when the candidate explicitly sends it — nothing about
     // evidence edits touches publishedState.
     const data: {
       title?: string
       description?: string | null
+      verificationStatus?: "pending"
       publishedState?: ToggleState
     } = {}
 
@@ -234,6 +240,9 @@ export async function PATCH(
     if (status !== undefined) {
       data.publishedState = status
     }
+    if (project.verificationStatus === "rejected" && hasContentChange) {
+  data.verificationStatus = "pending"
+}
 
     // Update the project
     const updatedProject = await prisma.project.update({
