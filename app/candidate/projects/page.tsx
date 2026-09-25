@@ -5,8 +5,6 @@ import Link from "next/link"
 
 import EmptyState from "@/app/components/EmptyState"
 import {
-  STATUS_CLASS,
-  STATUS_LABEL,
   VERIFICATION_STATUS_CLASS,
   VERIFICATION_STATUS_LABEL,
   type ProjectStatus,
@@ -25,15 +23,6 @@ type ProjectSummary = {
 
 const serif = { fontFamily: "var(--font-serif, Georgia, serif)" } as const
 
-function StatusTag({ state }: { state: ProjectStatus }) {
-  return (
-    <span
-      className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11.5px] font-medium ${STATUS_CLASS[state]}`}
-    >
-      {STATUS_LABEL[state]}
-    </span>
-  )
-}
 
 function PageHeader({ count }: { count?: number }) {
   return (

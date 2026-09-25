@@ -323,7 +323,7 @@ export default function EditProjectPage() {
         return
       }
 
-      setProject((prev) => (prev ? { ...prev, title, description } : prev))
+      setProject((prev) => (prev ? { ...prev, ...data } : prev))
       setSaved(true)
       setTimeout(() => setSaved(false), 2500)
     } catch {
@@ -623,8 +623,9 @@ export default function EditProjectPage() {
     </p>
 
     <p className="mt-1 text-[12.5px] leading-5 text-[#16231F]/70">
-      Review the feedback, make the necessary changes to your project,
-      and submit it again for verification.
+      Review the feedback, make your changes, then click{" "}
+      <span className="font-medium">Save changes</span>. Saving your
+      changes will resubmit this project for review.
     </p>
   </div>
 )}
