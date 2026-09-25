@@ -9,8 +9,14 @@ import { CheckBadge } from "@/app/components/AppShell"
 type PublicProject = {
   id: string
   title: string
+  candidateId: string
   candidateName: string
   description: string | null
+}
+
+type PublicProjectsResponse = {
+  projects: PublicProject[]
+  nextCursor: string | null
 }
 
 type DisplayRow = PublicProject & {
@@ -213,7 +219,7 @@ export default function PublicProjectsPage() {
           ? `/api/public/projects?search=${encodeURIComponent(debouncedQuery)}`
           : "/api/public/projects"
         const res = await fetch(url)
-        const data = await res.json().catch(() => [])
+        const data = await res.json().catch(() => ({ projects: [], nextCursor: null }))
 
         if (cancelled || requestId !== requestIdRef.current) return
 
@@ -227,7 +233,7 @@ export default function PublicProjectsPage() {
         }
 
         setError(null)
-        setResults(data as PublicProject[])
+        setResults((data as PublicProjectsResponse).projects)
         setInitialLoading(false)
       } catch {
         if (cancelled || requestId !== requestIdRef.current) return
