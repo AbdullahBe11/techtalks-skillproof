@@ -67,6 +67,7 @@ function isCandidateProfileShape(value: unknown): value is CandidateProfile {
   return (
     typeof value === "object" &&
     value !== null &&
+    typeof (value as { name?: unknown }).name === "string" &&
     Array.isArray((value as { projects?: unknown }).projects)
   )
 }
@@ -258,7 +259,7 @@ export default function PublicCandidateProfilePage() {
       <div className="flex min-h-screen flex-col bg-[#F6F4EE] text-[#16231F]">
         <PublicHeader />
         <main className="mx-auto w-full max-w-5xl flex-1 overflow-x-hidden px-4 py-8">
-          <p className="text-[13px] text-[#16231F]/55">Loading…</p>
+          <p role="status" className="text-[13px] text-[#16231F]/55">Loading…</p>
         </main>
       </div>
     )
