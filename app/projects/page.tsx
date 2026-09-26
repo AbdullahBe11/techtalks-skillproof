@@ -9,6 +9,7 @@ import { CheckBadge } from "@/app/components/AppShell"
 type PublicProject = {
   id: string
   title: string
+  candidateId: string
   candidateName: string
   description: string | null
 }
@@ -162,12 +163,13 @@ function ResultRow({
     >
       <div className="min-h-0 overflow-hidden">
         <div className="flex flex-col gap-1 py-3.5">
-          <p
-            className="break-words text-[14.5px] font-medium text-[#16231F]"
+          <Link
+            href={`/candidates/${project.candidateId}`}
+            className="w-fit break-words text-[14.5px] font-medium text-[#16231F] no-underline hover:underline focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
             style={serif}
           >
             {project.title}
-          </p>
+          </Link>
           <div className="flex items-center gap-1.5 text-[12.5px] text-[#16231F]/70">
             <CheckBadge className="h-4 w-4 bg-[#2F6F52]" strokeWidth={3} />
             <span>{project.candidateName}</span>
@@ -390,9 +392,6 @@ export default function PublicProjectsPage() {
         {!error && !initialLoading && displayed.length > 0 && (
           <ul className="mt-6 border-t border-[#D8D3C4]">
             {displayed.map((row) => (
-              // TODO: wrap title in <Link href={`/candidates/${profileId}`}>
-              // once TS-33's public candidate profile page exists. The
-              // current /api/public/projects response has no profileId yet.
               <ResultRow
                 key={row.id}
                 project={row}
