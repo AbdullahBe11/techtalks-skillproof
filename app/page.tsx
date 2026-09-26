@@ -1,30 +1,12 @@
 import Link from "next/link"
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
+import { CheckBadge } from "@/app/components/AppShell"
 
 const ROLE_HOME: Record<string, string> = {
   candidate: "/candidate/projects",
   verifier: "/verifier/queue",
   recruiter: "/recruiter/browse",
-}
-
-function CheckBadge() {
-  return (
-    <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#2F6F52]">
-      <svg
-        viewBox="0 0 24 24"
-        className="h-4 w-4"
-        fill="none"
-        stroke="#F6F4EE"
-        strokeWidth={2.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M5 13l4 4L19 7" />
-      </svg>
-    </span>
-  )
 }
 
 export default async function Home() {
