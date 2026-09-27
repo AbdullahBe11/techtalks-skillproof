@@ -11,6 +11,7 @@ export async function GET(request: Request) {
     const projects = await prisma.project.findMany({
       where: {
         verificationStatus: "verified",
+        publishedState: "published",
         ...(search
           ? {
               OR: [
@@ -46,6 +47,7 @@ export async function GET(request: Request) {
     const result = projects.map((project) => ({
       id: project.id,
       title: project.title,
+      candidateId: project.profile.user.id,
       candidateName: project.profile.user.name,
       description: project.description,
     }))
