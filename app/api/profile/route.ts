@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
-import { PrismaClient } from "@prisma/client"
-
-const prisma = new PrismaClient()
+import { prisma } from "@/lib/prisma"
 
 export async function GET() {
   try {
@@ -136,6 +134,15 @@ export async function PATCH(request: Request) {
         } catch {
           return NextResponse.json(
             { error: "Invalid URL." },
+            { status: 400 }
+          )
+        }
+
+        // Reject non-http(s) schemes (e.g. `javascript:`) that `new URL()`
+        // parses successfully but are never legitimate CV links.
+        if (!/^https?:\/\//i.test(cvUrl.trim())) {
+          return NextResponse.json(
+            { error: "CV link must be a valid http or https URL." },
             { status: 400 }
           )
         }

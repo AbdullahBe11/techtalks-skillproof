@@ -4,13 +4,21 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 
 import EmptyState from "@/app/components/EmptyState"
-import { STATUS_CLASS, STATUS_LABEL, type ProjectStatus } from "./status"
+import {
+  STATUS_CLASS,
+  STATUS_LABEL,
+  VERIFICATION_STATUS_CLASS,
+  VERIFICATION_STATUS_LABEL,
+  type ProjectStatus,
+  type VerificationStatus,
+} from "./status"
 
 type ProjectSummary = {
   id: string
   title: string
   description: string | null
   publishedState: ProjectStatus
+  verificationStatus: VerificationStatus
   createdAt: string
   evidenceCount: number
 }
@@ -148,11 +156,27 @@ export default function CandidateProjectsPage() {
                   ? "evidence link"
                   : "evidence links"}
               </span>
-              <StatusTag state={project.publishedState} />
+              
+               <StatusTag state={project.publishedState} />
+
+              <VerificationStatusTag status={project.verificationStatus} />
             </div>
           </li>
         ))}
       </ul>
     </main>
+  )
+}
+function VerificationStatusTag({
+  status,
+}: {
+  status: VerificationStatus
+}) {
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11.5px] font-medium ${VERIFICATION_STATUS_CLASS[status]}`}
+    >
+      {VERIFICATION_STATUS_LABEL[status]}
+    </span>
   )
 }
