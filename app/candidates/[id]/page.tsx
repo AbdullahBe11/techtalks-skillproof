@@ -6,6 +6,7 @@ import { useParams } from "next/navigation"
 
 import EmptyState from "@/app/components/EmptyState"
 import { CheckBadge } from "@/app/components/AppShell"
+import { isSafeExternalUrl } from "@/lib/validation"
 
 type CandidateProject = {
   id: string
@@ -52,12 +53,6 @@ function formatDate(value: string) {
     month: "short",
     day: "numeric",
   })
-}
-
-// Only http(s) links are ever legitimate CV URLs — rejects schemes like
-// `javascript:` that would otherwise execute when clicked.
-function isSafeExternalUrl(value: string): boolean {
-  return /^https?:\/\//i.test(value)
 }
 
 // Minimal structural check on a successful response body — guards against
