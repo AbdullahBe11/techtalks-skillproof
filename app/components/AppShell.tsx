@@ -111,7 +111,7 @@ export default function AppShell({ role, userName, children }: AppShellProps) {
                 gives it its own visual weight so it doesn't blend with the
                 faded inactive nav links next to it. */}
             <button
-              onClick={() => signOut()}
+              onClick={() => signOut({ callbackUrl: "/" })}
               className="text-xs border border-[#F6F4EE]/35 rounded px-2.5 py-1.5 text-[#F6F4EE] hover:bg-[#F6F4EE]/10 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
             >
               Sign out
