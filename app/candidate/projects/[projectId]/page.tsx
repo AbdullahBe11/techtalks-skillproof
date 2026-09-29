@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { getSession } from "next-auth/react"
+import SkillsInput from "@/app/components/SkillTags"
 
 import {
   STATUS_CLASS,
@@ -27,6 +28,7 @@ type ProjectDetail = {
   id: string
   title: string
   description: string | null
+  skills: string[]
   publishedState: ProjectStatus
   verificationStatus: VerificationStatus
   reviewerFeedback: string | null
@@ -204,6 +206,7 @@ export default function EditProjectPage() {
 
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
+  const [skills, setSkills] = useState<string[]>([])
   const [titleError, setTitleError] = useState<string | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -258,6 +261,7 @@ export default function EditProjectPage() {
           setProject(loaded)
           setTitle(loaded.title)
           setDescription(loaded.description ?? "")
+          setSkills(loaded.skills ?? [])
         }
       } catch {
         if (!cancelled) {
@@ -306,6 +310,7 @@ export default function EditProjectPage() {
         body: JSON.stringify({
           title: title.trim(),
           description: description.trim(),
+          skills,
         }),
       })
 
@@ -670,6 +675,19 @@ export default function EditProjectPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className={inputClass(false)}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="skills" className={labelClass}>
+            Skills used{" "}
+            <span className="font-normal text-[#16231F]/45">(optional)</span>
+          </label>
+          <SkillsInput
+            id="skills"
+            value={skills}
+            onChange={setSkills}
+            inputClassName={inputClass(false)}
           />
         </div>
 
