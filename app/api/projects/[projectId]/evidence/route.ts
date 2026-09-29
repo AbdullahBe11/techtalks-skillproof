@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { isSafeExternalUrl } from "@/lib/validation"
 
 export async function POST(
   request: Request,
@@ -81,6 +82,15 @@ export async function POST(
     } catch {
       return NextResponse.json(
         { error: "Invalid URL." },
+        { status: 400 }
+      )
+    }
+
+    // Reject non-http(s) schemes (e.g. `javascript:`) that `new URL()` parses
+    // successfully — these links are shown to verifiers, so they must be safe.
+    if (!isSafeExternalUrl(evidenceUrl.trim())) {
+      return NextResponse.json(
+        { error: "Evidence link must be a valid http or https URL." },
         { status: 400 }
       )
     }
