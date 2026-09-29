@@ -273,9 +273,17 @@ function SignInForm() {
             </div>
 
             <div>
-              <label htmlFor="password" className={labelClass}>
-                Password
-              </label>
+              <div className="mb-1 flex items-baseline justify-between">
+                <label htmlFor="password" className="block text-[13px] font-medium text-[#16231F]/70">
+                  Password
+                </label>
+                <Link
+                  href="/forgot-password"
+                  className="text-[12.5px] font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <input
                 id="password"
                 type="password"
