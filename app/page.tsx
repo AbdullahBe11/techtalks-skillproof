@@ -100,6 +100,13 @@ export default async function Home() {
               >
                 Sign in
               </Link>
+
+              <Link
+                href="/projects"
+                className="px-2 py-3 text-[13px] font-medium text-[#2F6F52] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+              >
+                Browse verified projects →
+              </Link>
             </div>
           </div>
 
