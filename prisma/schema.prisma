@@ -76,6 +76,7 @@ model Project {
   publishedState  ProjectState   @default(draft) @map("published_state")
   verificationStatus VerificationStatus @default(pending) @map("verification_status")
   reviewerFeedback   String?            @map("reviewer_feedback")
+  skills             String[]           @default([])
   
   evidence        Evidence[]
   reviews         Review[]

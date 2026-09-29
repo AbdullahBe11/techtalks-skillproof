@@ -5,6 +5,7 @@ import Link from "next/link"
 
 import EmptyState from "@/app/components/EmptyState"
 import { CheckBadge } from "@/app/components/AppShell"
+import { SkillChips } from "@/app/components/SkillTags"
 
 type PublicProject = {
   id: string
@@ -12,6 +13,7 @@ type PublicProject = {
   candidateId: string
   candidateName: string
   description: string | null
+  skills: string[]
 }
 
 type DisplayRow = PublicProject & {
@@ -121,11 +123,13 @@ function ResultRow({
   included,
   entering,
   reducedMotion,
+  onSelectSkill,
 }: {
   project: PublicProject
   included: boolean
   entering: boolean
   reducedMotion: boolean
+  onSelectSkill: (skill: string) => void
 }) {
   const [phase, setPhase] = useState<"entering" | "shown">(
     entering ? "entering" : "shown"
@@ -183,6 +187,11 @@ function ResultRow({
             <p className="line-clamp-2 text-[13px] leading-relaxed text-[#16231F]/60">
               {project.description}
             </p>
+          )}
+          {project.skills.length > 0 && (
+            <div className="mt-1">
+              <SkillChips skills={project.skills} onSelect={onSelectSkill} />
+            </div>
           )}
         </div>
       </div>
@@ -403,6 +412,7 @@ export default function PublicProjectsPage() {
                 included={row.included}
                 entering={row.entering}
                 reducedMotion={reducedMotion}
+                onSelectSkill={setQuery}
               />
             ))}
           </ul>

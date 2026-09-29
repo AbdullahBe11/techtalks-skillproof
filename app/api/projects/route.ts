@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { parseSkills } from "@/lib/skills"
 
 export async function GET() {
   try {
@@ -70,6 +71,7 @@ export async function GET() {
       description: project.description,
       publishedState: project.publishedState,
       createdAt: project.createdAt,
+      skills: project.skills,
       evidenceCount: project._count.evidence,
     }))
 
@@ -108,7 +110,7 @@ export async function POST(request: Request) {
 
     // 3. Read the request body
     const body = await request.json()
-    const { title, description } = body
+    const { title, description, skills } = body
 
     // 4. Title is required
     if (!title || typeof title !== "string" || !title.trim()) {
@@ -116,6 +118,12 @@ export async function POST(request: Request) {
         { error: "Title is required." },
         { status: 400 }
       )
+    }
+
+    // Skills are optional; when sent they must be a valid list of tags
+    const parsedSkills = parseSkills(skills ?? [])
+    if (!parsedSkills.ok) {
+      return NextResponse.json({ error: parsedSkills.error }, { status: 400 })
     }
 
     // 5. Get the signed-in user's database record
@@ -155,6 +163,7 @@ export async function POST(request: Request) {
           typeof description === "string"
             ? description.trim() || null
             : null,
+        skills: parsedSkills.skills,
       },
     })
 
