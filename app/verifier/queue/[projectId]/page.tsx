@@ -4,6 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react"
 import type { ReactNode } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { isSafeExternalUrl } from "@/lib/validation"
 
 type EvidenceType = "github" | "demo" | "documentation" | "other"
 type VerificationStatus = "pending" | "verified" | "rejected"
@@ -490,14 +491,25 @@ export default function VerifierReviewPage() {
               <span className="shrink-0 text-[11px] font-medium capitalize text-[#16231F]/65">
                 {ev.type}
               </span>
-              <a
-                href={ev.evidenceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="min-w-0 flex-1 truncate text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
-              >
-                {ev.shortLabel}
-              </a>
+              {isSafeExternalUrl(ev.evidenceUrl) ? (
+                <a
+                  href={ev.evidenceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="min-w-0 flex-1 truncate text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                >
+                  {ev.shortLabel}
+                </a>
+              ) : (
+                // Older evidence saved before URLs were checked: never make an
+                // unsafe link clickable.
+                <span className="min-w-0 flex-1 truncate text-[#16231F]/60">
+                  {ev.shortLabel}{" "}
+                  <span className="text-[11.5px] text-[#A8452E]">
+                    (link hidden: not an http/https URL)
+                  </span>
+                </span>
+              )}
             </li>
           ))}
         </ul>
