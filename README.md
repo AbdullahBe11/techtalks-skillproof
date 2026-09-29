@@ -391,9 +391,7 @@ Recruiter filters candidates
               ↓
 Recruiter expresses interest
               ↓
-Candidate responds
-              ↓
-Direct connection
+Candidate's contact info is shared with that recruiter
 ```
 
 ---
