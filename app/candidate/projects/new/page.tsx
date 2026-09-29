@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import SkillsInput from "@/app/components/SkillTags"
 
 const serif = { fontFamily: "var(--font-serif, Georgia, serif)" } as const
 
@@ -30,6 +31,7 @@ export default function NewProjectPage() {
 
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
+  const [skills, setSkills] = useState<string[]>([])
   const [titleError, setTitleError] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -52,6 +54,7 @@ export default function NewProjectPage() {
         body: JSON.stringify({
           title: title.trim(),
           description: description.trim() || undefined,
+          skills,
         }),
       })
 
@@ -131,6 +134,19 @@ export default function NewProjectPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className={inputClass(false)}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="skills" className={labelClass}>
+            Skills used{" "}
+            <span className="font-normal text-[#16231F]/45">(optional)</span>
+          </label>
+          <SkillsInput
+            id="skills"
+            value={skills}
+            onChange={setSkills}
+            inputClassName={inputClass(false)}
           />
         </div>
 

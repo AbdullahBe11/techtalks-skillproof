@@ -7,11 +7,13 @@ import { useParams } from "next/navigation"
 import EmptyState from "@/app/components/EmptyState"
 import { CheckBadge } from "@/app/components/AppShell"
 import { isSafeExternalUrl } from "@/lib/validation"
+import { SkillChips } from "@/app/components/SkillTags"
 
 type CandidateProject = {
   id: string
   title: string
   description: string | null
+  skills: string[]
   createdAt: string
 }
 
@@ -163,6 +165,11 @@ function ProjectRow({
           <p className="line-clamp-2 text-[13px] leading-relaxed text-[#16231F]/60">
             {project.description}
           </p>
+        )}
+        {project.skills?.length > 0 && (
+          <div className="mt-1">
+            <SkillChips skills={project.skills} />
+          </div>
         )}
       </div>
     </li>
