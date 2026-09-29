@@ -172,7 +172,12 @@ function ResultRow({
           </Link>
           <div className="flex items-center gap-1.5 text-[12.5px] text-[#16231F]/70">
             <CheckBadge className="h-4 w-4 bg-[#2F6F52]" strokeWidth={3} />
-            <span>{project.candidateName}</span>
+            <Link
+              href={`/candidates/${project.candidateId}`}
+              className="text-[#16231F]/70 no-underline hover:underline focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+            >
+              {project.candidateName}
+            </Link>
           </div>
           {project.description && (
             <p className="line-clamp-2 text-[13px] leading-relaxed text-[#16231F]/60">
