@@ -46,6 +46,7 @@ model User {
   reviews     Review[]
   interests   Interest[]
   shortLists  ShortList[]
+  passwordResetTokens PasswordResetToken[]
   
   @@map("users")
 }
@@ -75,6 +76,7 @@ model Project {
   publishedState  ProjectState   @default(draft) @map("published_state")
   verificationStatus VerificationStatus @default(pending) @map("verification_status")
   reviewerFeedback   String?            @map("reviewer_feedback")
+  skills             String[]           @default([])
   
   evidence        Evidence[]
   reviews         Review[]
@@ -152,4 +154,19 @@ model ShortList {
   
   @@id([userId, profileId])
   @@map("short_lists")
+}
+
+// One-time tokens for "forgot password". Only a SHA-256 hash of the token is
+// stored — the raw token only ever exists in the emailed link.
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("password_reset_tokens")
 }

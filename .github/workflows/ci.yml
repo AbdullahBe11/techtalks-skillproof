@@ -25,3 +25,10 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Build (includes TypeScript check)
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+          AUTH_SECRET: ci-only-placeholder-secret
+          NEXTAUTH_SECRET: ci-only-placeholder-secret

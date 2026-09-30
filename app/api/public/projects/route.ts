@@ -1,17 +1,21 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { normalizeSkill } from "@/lib/skills"
 
 export async function GET(request: Request) {
   try {
     // Read the optional search parameter from the URL
     const { searchParams } = new URL(request.url)
-    const search = searchParams.get("search")
+    const search = searchParams.get("search")?.trim() || null
+    // Optional exact skill filter, e.g. ?skill=react
+    const skill = normalizeSkill(searchParams.get("skill") ?? "") || null
 
     // Get verified projects and optionally filter by title or description
     const projects = await prisma.project.findMany({
       where: {
         verificationStatus: "verified",
         publishedState: "published",
+        ...(skill ? { skills: { has: skill } } : {}),
         ...(search
           ? {
               OR: [
@@ -25,6 +29,12 @@ export async function GET(request: Request) {
                   description: {
                     contains: search,
                     mode: "insensitive",
+                  },
+                },
+                // A search that exactly matches a skill tag (e.g. "React")
+                {
+                  skills: {
+                    has: normalizeSkill(search),
                   },
                 },
               ],
@@ -50,6 +60,7 @@ export async function GET(request: Request) {
       candidateId: project.profile.user.id,
       candidateName: project.profile.user.name,
       description: project.description,
+      skills: project.skills,
     }))
 
     return NextResponse.json(result, { status: 200 })

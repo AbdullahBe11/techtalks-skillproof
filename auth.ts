@@ -52,5 +52,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
   },
-  // pages: { signIn: "/signin" }, // temporarily disabled for testing — Youssef's /signin page (TS-15) isn't built yet
+  pages: { signIn: "/signin" },
 })

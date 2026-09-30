@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { parseSkills, sameSkills } from "@/lib/skills"
 
 export async function GET(
   request: Request,
@@ -146,7 +147,7 @@ export async function PATCH(
       )
     }
 
-    const { title, description, status } = body
+    const { title, description, status, skills } = body
 
     // Title, if provided, must not be empty
     if (
@@ -165,6 +166,16 @@ export async function PATCH(
         { error: "Description must be a string." },
         { status: 400 }
       )
+    }
+
+    // Skills, if provided, must be a valid list of tags
+    let newSkills: string[] | undefined
+    if (skills !== undefined) {
+      const parsed = parseSkills(skills)
+      if (!parsed.ok) {
+        return NextResponse.json({ error: parsed.error }, { status: 400 })
+      }
+      newSkills = parsed.skills
     }
 
     // status, if provided, toggles publishedState between draft and published
@@ -217,7 +228,8 @@ export async function PATCH(
     const hasContentChange =
   (title !== undefined && title.trim() !== project.title) ||
   (description !== undefined &&
-    (description.trim() || null) !== project.description)
+    (description.trim() || null) !== project.description) ||
+  (newSkills !== undefined && !sameSkills(newSkills, project.skills))
 
     // Only update the fields that were actually provided. status only
     // changes here, when the candidate explicitly sends it — nothing about
@@ -225,6 +237,7 @@ export async function PATCH(
     const data: {
       title?: string
       description?: string | null
+      skills?: string[]
       verificationStatus?: "pending"
       publishedState?: ToggleState
     } = {}
@@ -235,6 +248,10 @@ export async function PATCH(
 
     if (description !== undefined) {
       data.description = description.trim() || null
+    }
+
+    if (newSkills !== undefined) {
+      data.skills = newSkills
     }
 
     if (status !== undefined) {
