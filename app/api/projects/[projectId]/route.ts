@@ -257,7 +257,8 @@ export async function PATCH(
     if (status !== undefined) {
       data.publishedState = status
     }
-    if (project.verificationStatus === "rejected" && hasContentChange) {
+    if (project.verificationStatus === "rejected" ||project.verificationStatus === "verified"&&
+       hasContentChange) {
   data.verificationStatus = "pending"
 }
 

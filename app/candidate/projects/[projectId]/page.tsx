@@ -635,6 +635,22 @@ export default function EditProjectPage() {
   </div>
 )}
 
+{project.verificationStatus === "verified" && (
+  <div
+    role="alert"
+    className="mt-4 rounded border-l-2 border-[#2F6F52] bg-[#2F6F52]/10 px-4 py-3"
+  >
+    <p className="text-[13px] font-semibold text-[#2F6F52]">
+      This project is verified.
+    </p>
+
+    <p className="mt-1 text-[12.5px] leading-5 text-[#16231F]/70">
+      Changing the title, description or skills will send it back for review,
+      and it will be hidden from public pages until it&apos;s verified again.
+    </p>
+  </div>
+)}
+
       <form
         className="mt-5 flex flex-col gap-[13px]"
         onSubmit={handleSave}
