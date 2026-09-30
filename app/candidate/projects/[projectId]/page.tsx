@@ -637,7 +637,7 @@ export default function EditProjectPage() {
 
 {project.verificationStatus === "verified" && (
   <div
-    role="alert"
+    role="note"
     className="mt-4 rounded border-l-2 border-[#2F6F52] bg-[#2F6F52]/10 px-4 py-3"
   >
     <p className="text-[13px] font-semibold text-[#2F6F52]">
