@@ -187,6 +187,16 @@ export default function PublicCandidateProfilePage() {
     message: string
   } | null>(null)
 
+  const [interestStatus, setInterestStatus] = useState<
+  "idle" | "loading" | "success"
+>("idle")
+
+const [shortlistStatus, setShortlistStatus] = useState<
+  "idle" | "loading" | "success"
+>("idle")
+
+const [actionError, setActionError] = useState<string | null>(null)
+
   useEffect(() => {
     let cancelled = false
 
@@ -231,7 +241,71 @@ export default function PublicCandidateProfilePage() {
       cancelled = true
     }
   }, [candidateId])
+ async function handleInterest() {
+    setInterestStatus("loading")
+    setActionError(null)
 
+    try {
+      const res = await fetch("/api/recruiter/interests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          candidateId,
+        }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        setActionError(
+          (data as { error?: string }).error ??
+            "Something went wrong. Please try again."
+        )
+        setInterestStatus("idle")
+        return
+      }
+
+      setInterestStatus("success")
+    } catch {
+      setActionError("Something went wrong. Please try again.")
+      setInterestStatus("idle")
+    }
+  }
+
+  async function handleShortlist() {
+  setShortlistStatus("loading")
+  setActionError(null)
+
+  try {
+    const res = await fetch("/api/recruiter/shortlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        candidateId,
+      }),
+    })
+
+    const data = await res.json().catch(() => ({}))
+
+    if (!res.ok) {
+      setActionError(
+        (data as { error?: string }).error ??
+          "Something went wrong. Please try again."
+      )
+      setShortlistStatus("idle")
+      return
+    }
+
+    setShortlistStatus("success")
+  } catch {
+    setActionError("Something went wrong. Please try again.")
+    setShortlistStatus("idle")
+  }
+}
   if (loadError) {
     return (
       <div className="flex min-h-screen flex-col bg-[#F6F4EE] text-[#16231F]">
@@ -309,8 +383,50 @@ export default function PublicCandidateProfilePage() {
               </a>
             )}
           </div>
+          
         )}
+        <div className="mt-5 flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={handleInterest}
+            disabled={
+              interestStatus === "loading" ||
+              interestStatus === "success"
+            }
+            className="rounded bg-[#16231F] px-4 py-2.5 text-[13px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+          >
+            {interestStatus === "loading"
+              ? "Sending..."
+              : interestStatus === "success"
+                ? "Interested"
+                : "Express interest"}
+          </button>
 
+          <button
+            type="button"
+            onClick={handleShortlist}
+            disabled={
+              shortlistStatus === "loading" ||
+              shortlistStatus === "success"
+            }
+            className="rounded border border-[#D8D3C4] bg-white/30 px-4 py-2.5 text-[13px] font-medium text-[#16231F] transition-colors hover:bg-white/60 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+          >
+            {shortlistStatus === "loading"
+              ? "Saving..."
+              : shortlistStatus === "success"
+                ? "Shortlisted"
+                : "Add to shortlist"}
+          </button>
+        </div>
+
+        {actionError && (
+          <div
+            role="alert"
+            className="mt-3 max-w-xl rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+          >
+            {actionError}
+          </div>
+        )}
         <h2
           className={`text-[17px] font-semibold text-[#16231F] ${hasProfileDetails ? "mt-8" : "mt-6"}`}
           style={serif}
