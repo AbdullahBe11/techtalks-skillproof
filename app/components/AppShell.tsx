@@ -41,7 +41,10 @@ export function CheckBadge({
 }
 
 const ROLE_NAV_LINKS: Record<string, NavLink[]> = {
-  candidate: [{ label: "My projects", href: "/candidate/projects" }],
+  candidate: [
+    { label: "My projects", href: "/candidate/projects" },
+    { label: "Interested recruiters", href: "/candidate/interests" },
+  ],
   recruiter: [{ label: "Browse candidates", href: "/recruiter/browse" }],
   verifier: [{ label: "Review queue", href: "/verifier/queue" }],
 }
