@@ -434,7 +434,6 @@ const [isRecruiter, setIsRecruiter] = useState(false)
               </a>
             )}
           </div>
-          
         )}
 {isRecruiter && (
   <>

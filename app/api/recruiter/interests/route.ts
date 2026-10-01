@@ -15,6 +15,15 @@ export async function POST(request: Request) {
       )
     }
 
+    const userId = (session.user as { id?: string }).id
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized." },
+        { status: 401 }
+      )
+    }
+
     // Only recruiters can express interest
     const userRole = (session.user as { role?: string }).role
 
@@ -56,7 +65,7 @@ export async function POST(request: Request) {
     // Find the signed-in recruiter
     const recruiter = await prisma.user.findUnique({
       where: {
-       id: session.user.id,
+        id: userId,
       },
     })
 
@@ -123,6 +132,69 @@ export async function POST(request: Request) {
     }
 
     console.error("Express interest error:", error)
+
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again." },
+      { status: 500 }
+    )
+  }
+}
+
+export async function GET() {
+  try {
+    // Check authentication
+    const session = await auth()
+
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized." },
+        { status: 401 }
+      )
+    }
+
+    const userId = (session.user as { id?: string }).id
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized." },
+        { status: 401 }
+      )
+    }
+
+    // Only recruiters can view their interests
+    const userRole = (session.user as { role?: string }).role
+
+    if (userRole !== "recruiter") {
+      return NextResponse.json(
+        { error: "Only recruiters can view their interests." },
+        { status: 403 }
+      )
+    }
+
+    // The candidates this recruiter has already marked as interested
+    const interests = await prisma.interest.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        profile: {
+          select: {
+            userId: true,
+          },
+        },
+      },
+    })
+
+    // candidateIds are candidate user ids, the same ids used by
+    // /api/recruiter/candidates and POST /api/recruiter/interests
+    const candidateIds = interests.map((interest) => interest.profile.userId)
+
+    return NextResponse.json({ candidateIds }, { status: 200 })
+  } catch (error) {
+    console.error("List interests error:", error)
 
     return NextResponse.json(
       { error: "Something went wrong. Please try again." },
