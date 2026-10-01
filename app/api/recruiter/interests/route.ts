@@ -1,7 +1,10 @@
-import { NextResponse } from "next/server"
+import { NextResponse, after } from "next/server"
 import { Prisma } from "@prisma/client"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { isEmailConfigured, sendEmail } from "@/lib/email"
+import { buildInterestEmail } from "@/lib/interest-email"
+import { getAppUrl } from "@/lib/password-reset"
 
 export async function POST(request: Request) {
   try {
@@ -112,6 +115,16 @@ export async function POST(request: Request) {
       },
     })
 
+    // Let the candidate know (TS-55). Only reached for a new interest, since a
+    // duplicate throws P2002 above. The email is sent after the response so a
+    // slow or failing mail server never delays or breaks the recruiter's click.
+    notifyCandidate(request.url, {
+      candidateEmail: candidate.email,
+      candidateName: candidate.name,
+      recruiterName: recruiter.name,
+      recruiterEmail: recruiter.email,
+    })
+
     return NextResponse.json(
       {
         candidateId: candidate.id,
@@ -201,4 +214,38 @@ export async function GET() {
       { status: 500 }
     )
   }
+}
+
+function notifyCandidate(
+  requestUrl: string,
+  details: {
+    candidateEmail: string
+    candidateName: string
+    recruiterName: string
+    recruiterEmail: string
+  }
+) {
+  const appUrl = getAppUrl(requestUrl)
+
+  if (!appUrl || !isEmailConfigured()) {
+    console.log(
+      `[dev] Interest email for ${details.candidateEmail} skipped: email is not configured.`
+    )
+    return
+  }
+
+  const email = buildInterestEmail({
+    candidateName: details.candidateName,
+    recruiterName: details.recruiterName,
+    recruiterEmail: details.recruiterEmail,
+    interestsUrl: `${appUrl}/candidate/interests`,
+  })
+
+  after(async () => {
+    try {
+      await sendEmail({ to: details.candidateEmail, ...email })
+    } catch (error) {
+      console.error("Interest notification email failed:", error)
+    }
+  })
 }
