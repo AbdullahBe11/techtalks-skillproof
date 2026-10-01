@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     // Find the signed-in recruiter
     const recruiter = await prisma.user.findUnique({
       where: {
-        email: session.user.email!,
+       id: session.user.id,
       },
     })
 

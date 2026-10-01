@@ -196,6 +196,7 @@ const [shortlistStatus, setShortlistStatus] = useState<
 >("idle")
 
 const [actionError, setActionError] = useState<string | null>(null)
+const [isRecruiter, setIsRecruiter] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -241,6 +242,52 @@ const [actionError, setActionError] = useState<string | null>(null)
       cancelled = true
     }
   }, [candidateId])
+
+  useEffect(() => {
+  let cancelled = false
+
+  async function loadRecruiterInterestState() {
+    try {
+      const res = await fetch("/api/recruiter/interests")
+      const data = await res.json().catch(() => ({}))
+
+      if (cancelled) return
+
+      if (res.status === 401 || res.status === 403) {
+        setIsRecruiter(false)
+        return
+      }
+
+      if (!res.ok) {
+        setIsRecruiter(false)
+        return
+      }
+
+      const candidateIds = Array.isArray(
+        (data as { candidateIds?: unknown }).candidateIds
+      )
+        ? (data as { candidateIds: unknown[] }).candidateIds
+        : []
+
+      setIsRecruiter(true)
+
+      if (candidateIds.includes(candidateId)) {
+        setInterestStatus("success")
+      }
+    } catch {
+      if (!cancelled) {
+        setIsRecruiter(false)
+      }
+    }
+  }
+
+  loadRecruiterInterestState()
+
+  return () => {
+    cancelled = true
+  }
+}, [candidateId])
+
  async function handleInterest() {
     setInterestStatus("loading")
     setActionError(null)
@@ -257,6 +304,10 @@ const [actionError, setActionError] = useState<string | null>(null)
       })
 
       const data = await res.json().catch(() => ({}))
+      if (res.status === 409) {
+  setInterestStatus("success")
+  return
+}
 
       if (!res.ok) {
         setActionError(
@@ -385,48 +436,52 @@ const [actionError, setActionError] = useState<string | null>(null)
           </div>
           
         )}
-        <div className="mt-5 flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={handleInterest}
-            disabled={
-              interestStatus === "loading" ||
-              interestStatus === "success"
-            }
-            className="rounded bg-[#16231F] px-4 py-2.5 text-[13px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
-          >
-            {interestStatus === "loading"
-              ? "Sending..."
-              : interestStatus === "success"
-                ? "Interested"
-                : "Express interest"}
-          </button>
+{isRecruiter && (
+  <>
+    <div className="mt-5 flex flex-wrap gap-3">
+      <button
+        type="button"
+        onClick={handleInterest}
+        disabled={
+          interestStatus === "loading" ||
+          interestStatus === "success"
+        }
+        className="rounded bg-[#16231F] px-4 py-2.5 text-[13px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+      >
+        {interestStatus === "loading"
+          ? "Sending..."
+          : interestStatus === "success"
+            ? "Interested ✓"
+            : "Express interest"}
+      </button>
 
-          <button
-            type="button"
-            onClick={handleShortlist}
-            disabled={
-              shortlistStatus === "loading" ||
-              shortlistStatus === "success"
-            }
-            className="rounded border border-[#D8D3C4] bg-white/30 px-4 py-2.5 text-[13px] font-medium text-[#16231F] transition-colors hover:bg-white/60 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
-          >
-            {shortlistStatus === "loading"
-              ? "Saving..."
-              : shortlistStatus === "success"
-                ? "Shortlisted"
-                : "Add to shortlist"}
-          </button>
-        </div>
+      <button
+        type="button"
+        onClick={handleShortlist}
+        disabled={
+          shortlistStatus === "loading" ||
+          shortlistStatus === "success"
+        }
+        className="rounded border border-[#D8D3C4] bg-white/30 px-4 py-2.5 text-[13px] font-medium text-[#16231F] transition-colors hover:bg-white/60 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+      >
+        {shortlistStatus === "loading"
+          ? "Saving..."
+          : shortlistStatus === "success"
+            ? "Shortlisted"
+            : "Add to shortlist"}
+      </button>
+    </div>
 
-        {actionError && (
-          <div
-            role="alert"
-            className="mt-3 max-w-xl rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
-          >
-            {actionError}
-          </div>
-        )}
+    {actionError && (
+      <div
+        role="alert"
+        className="mt-3 max-w-xl rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+      >
+        {actionError}
+      </div>
+    )}
+  </>
+)}
         <h2
           className={`text-[17px] font-semibold text-[#16231F] ${hasProfileDetails ? "mt-8" : "mt-6"}`}
           style={serif}
