@@ -100,9 +100,12 @@ function SignInForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
-  const [formError, setFormError] = useState<string | null>(null)
-  const [submitting, setSubmitting] = useState(false)
+const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+const [formError, setFormError] = useState<string | null>(null)
+const [submitting, setSubmitting] = useState(false)
+const [showResend, setShowResend] = useState(false)
+const [resending, setResending] = useState(false)
+const [resendMessage, setResendMessage] = useState<string | null>(null)
 
   function clearFieldError(field: keyof FieldErrors) {
     setFieldErrors((prev) => {
@@ -120,9 +123,58 @@ function SignInForm() {
     return errs
   }
 
+async function handleResend() {
+  setResendMessage(null)
+
+  if (!email.trim()) {
+    setFormError("Email is required.")
+    return
+  }
+
+  setResending(true)
+
+  try {
+    const res = await fetch(
+      "/api/email-verification/resend",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+        }),
+      }
+    )
+
+    const data = await res.json().catch(() => ({}))
+
+    if (!res.ok) {
+      setFormError(
+        (data as { error?: string }).error ??
+          "Something went wrong. Please try again."
+      )
+      return
+    }
+
+    setResendMessage(
+      (data as { message?: string }).message ??
+        "If that email belongs to an unverified account, a confirmation link has been sent."
+    )
+  } catch {
+    setFormError(
+      "Couldn't reach the server. Check your connection and try again."
+    )
+  } finally {
+    setResending(false)
+  }
+}
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setFormError(null)
+    setShowResend(false)
+    setResendMessage(null)
 
     const errs = validate()
     setFieldErrors(errs)
@@ -138,11 +190,19 @@ function SignInForm() {
 
       // Any failure — wrong password, no such user, anything — is reported
       // with the exact same message. Never reveal whether the email exists.
-      if (!result || result.error) {
-        setFormError("Invalid email or password.")
-        setSubmitting(false)
-        return
-      }
+     if (result?.code === "email_not_verified") {
+  setFormError("Please confirm your email first")
+  setShowResend(true)
+  setSubmitting(false)
+  return
+}
+
+// Keep normal credential failures generic.
+    if (!result || result.error) {
+     setFormError("Invalid email or password.")
+     setSubmitting(false)
+     return
+}
 
       const callbackUrl = searchParams.get("callbackUrl")
       if (isSafeCallbackUrl(callbackUrl)) {
@@ -241,6 +301,27 @@ function SignInForm() {
               {formError}
             </div>
           )}
+          {showResend && (
+  <div className="mt-3">
+    <button
+      type="button"
+      onClick={handleResend}
+      disabled={resending}
+      className="w-full rounded border border-[#2F6F52] bg-[#F6F4EE] py-2.5 text-[13px] font-medium text-[#2F6F52] transition-colors hover:bg-[#2F6F52]/5 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+    >
+      {resending ? "Sending…" : "Resend email"}
+    </button>
+
+    {resendMessage && (
+      <p
+        role="status"
+        className="mt-2 text-[12.5px] leading-relaxed text-[#2F6F52]"
+      >
+        {resendMessage}
+      </p>
+    )}
+  </div>
+)}
 
           <form
             className="mt-3.5 flex flex-col gap-[13px]"
@@ -258,8 +339,10 @@ function SignInForm() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => {
-                  setEmail(e.target.value)
+                  setEmail(e.target.value)//changed to prevents the resend UI from staying around after the user changes the email.
                   clearFieldError("email")
+                  setShowResend(false)
+                  setResendMessage(null)
                 }}
                 className={inputClass(Boolean(fieldErrors.email))}
                 aria-invalid={fieldErrors.email ? true : undefined}
