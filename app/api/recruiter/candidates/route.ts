@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
-import { normalizeSkill } from "@/lib/skills"
+import { projectMatchesQuery } from "@/lib/skills"
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const keyword = searchParams.get("keyword")?.trim()
-    const normalizedKeyword = keyword ? normalizeSkill(keyword) : undefined
 
     // Only authenticated users can access this endpoint.
     const session = await auth()
@@ -37,29 +36,6 @@ export async function GET(request: Request) {
             some: {
               verificationStatus: "verified",
               publishedState: "published",
-              ...(keyword
-                ? {
-                    OR: [
-                      {
-                        title: {
-                          contains: keyword,
-                          mode: "insensitive",
-                        },
-                      },
-                      {
-                        description: {
-                          contains: keyword,
-                          mode: "insensitive",
-                        },
-                      },
-                      {
-                        skills: {
-                          has: normalizedKeyword!,
-                        },
-                      },
-                    ],
-                  }
-                : {}),
             },
           },
         },
@@ -89,7 +65,18 @@ export async function GET(request: Request) {
       },
     })
 
-    const result = candidates.map((candidate) => ({
+    // Keyword search runs here rather than in the database so skills can be
+    // matched partially and loosely ("nex" or "nextjs" finds "next.js"),
+    // which Prisma can't do inside a Postgres text array.
+    const matching = keyword
+      ? candidates.filter((candidate) =>
+          candidate.profile!.projects.some((project) =>
+            projectMatchesQuery(project, keyword)
+          )
+        )
+      : candidates
+
+    const result = matching.map((candidate) => ({
       id: candidate.id,
       name: candidate.name,
       bio: candidate.profile!.bio,
