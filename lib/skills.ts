@@ -36,3 +36,36 @@ export function parseSkills(
 export function sameSkills(a: string[], b: string[]): boolean {
   return a.length === b.length && a.every((s) => b.includes(s))
 }
+
+// Search helpers. Skills are compared in a "compact" form so small spelling
+// differences still match: "Next.js", "nextjs", "next js" and "next-js" are
+// all "nextjs". "#" and "+" are kept so "c#" and "c++" stay distinct.
+export function compactSkill(value: string): string {
+  return value.toLowerCase().replace(/[\s._-]+/g, "")
+}
+
+// Partial match: "nex" finds "next.js", "type script" finds "typescript".
+export function skillMatchesQuery(skill: string, query: string): boolean {
+  const q = compactSkill(query)
+  return q.length > 0 && compactSkill(skill).includes(q)
+}
+
+// Exact skill filter (e.g. a clicked chip), tolerant of the same differences.
+export function sameSkillLoose(a: string, b: string): boolean {
+  const ca = compactSkill(a)
+  return ca.length > 0 && ca === compactSkill(b)
+}
+
+// True when a project's title, description or any of its skills match the query.
+export function projectMatchesQuery(
+  project: { title: string; description: string | null; skills: string[] },
+  query: string
+): boolean {
+  const text = query.trim().toLowerCase()
+  if (!text) return true
+  return (
+    project.title.toLowerCase().includes(text) ||
+    (project.description ?? "").toLowerCase().includes(text) ||
+    project.skills.some((skill) => skillMatchesQuery(skill, query))
+  )
+}
