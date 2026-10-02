@@ -32,6 +32,14 @@ export async function GET(
                 description: true,
                 skills: true,
                 createdAt: true,
+                evidence: {
+                  select: {
+                    id: true,
+                    type: true,
+                    evidenceUrl: true,
+                    shortLabel: true,
+                  },
+                },
               },
             },
           },

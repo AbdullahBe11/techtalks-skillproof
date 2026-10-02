@@ -9,12 +9,22 @@ import { CheckBadge } from "@/app/components/AppShell"
 import { isSafeExternalUrl } from "@/lib/validation"
 import { SkillChips } from "@/app/components/SkillTags"
 
+type EvidenceType = "github" | "demo" | "documentation" | "other"
+
+type CandidateEvidence = {
+  id: string
+  type: EvidenceType
+  evidenceUrl: string
+  shortLabel: string
+}
+
 type CandidateProject = {
   id: string
   title: string
   description: string | null
   skills: string[]
   createdAt: string
+  evidence: CandidateEvidence[]
 }
 
 type CandidateProfile = {
@@ -84,6 +94,66 @@ function DocumentIcon() {
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
       <path d="M14 2v6h6" />
     </svg>
+  )
+}
+
+function EvidenceTypeIcon({ type }: { type: EvidenceType }) {
+  let path: React.ReactNode
+
+  switch (type) {
+    case "github":
+      path = (
+        <>
+          <path d="M9 6L4 12L9 18" />
+          <path d="M15 6L20 12L15 18" />
+        </>
+      )
+      break
+    case "demo":
+      path = (
+        <>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M10 8.5L16 12L10 15.5V8.5Z" fill="currentColor" />
+        </>
+      )
+      break
+    case "documentation":
+      path = (
+        <>
+          <path d="M7 3H14L18 7V21H7V3Z" />
+          <path d="M14 3V7H18" />
+          <path d="M9.5 12H15.5" />
+          <path d="M9.5 15.5H15.5" />
+        </>
+      )
+      break
+    case "other":
+      path = (
+        <>
+          <circle cx="12" cy="12" r="7" />
+          <circle cx="12" cy="12" r="1.6" fill="currentColor" />
+        </>
+      )
+      break
+  }
+
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2F6F52]/10 text-[#2F6F52]"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        className="h-3 w-3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {path}
+      </svg>
+    </span>
   )
 }
 
@@ -170,6 +240,25 @@ function ProjectRow({
           <div className="mt-1">
             <SkillChips skills={project.skills} />
           </div>
+        )}
+        {project.evidence?.length > 0 && (
+          <ul className="mt-2 flex flex-col gap-1.5">
+            {project.evidence.map((ev) =>
+              isSafeExternalUrl(ev.evidenceUrl) ? (
+                <li key={ev.id}>
+                  <a
+                    href={ev.evidenceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#2F6F52] no-underline hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                  >
+                    <EvidenceTypeIcon type={ev.type} />
+                    {ev.shortLabel}
+                  </a>
+                </li>
+              ) : null
+            )}
+          </ul>
         )}
       </div>
     </li>
