@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
-import { Prisma } from "@prisma/client"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 
-export async function POST(request: Request) {
+export async function GET() {
   try {
+    // Check authentication
     const session = await auth()
 
     if (!session?.user) {
@@ -14,107 +14,49 @@ export async function POST(request: Request) {
       )
     }
 
+    const userId = (session.user as { id?: string }).id
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized." },
+        { status: 401 }
+      )
+    }
+
+    // Only recruiters have a shortlist
     const userRole = (session.user as { role?: string }).role
 
     if (userRole !== "recruiter") {
       return NextResponse.json(
-        { error: "Only recruiters can shortlist candidates." },
+        { error: "Only recruiters can view their shortlist." },
         { status: 403 }
       )
     }
 
-    let body
-
-    try {
-      body = await request.json()
-    } catch {
-      return NextResponse.json(
-        { error: "Request body must be valid JSON." },
-        { status: 400 }
-      )
-    }
-
-    if (typeof body !== "object" || body === null || Array.isArray(body)) {
-      return NextResponse.json(
-        { error: "Request body must be a JSON object." },
-        { status: 400 }
-      )
-    }
-
-    const { candidateId } = body
-
-    if (!candidateId || typeof candidateId !== "string") {
-      return NextResponse.json(
-        { error: "candidateId is required." },
-        { status: 400 }
-      )
-    }
-
-    const recruiter = await prisma.user.findUnique({
+    // The candidates this recruiter has already shortlisted
+    const entries = await prisma.shortList.findMany({
       where: {
-        email: session.user.email!,
+        userId,
       },
-    })
-
-    if (!recruiter) {
-      return NextResponse.json(
-        { error: "User not found." },
-        { status: 404 }
-      )
-    }
-
-    const candidate = await prisma.user.findFirst({
-      where: {
-        id: candidateId,
-        role: "candidate",
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
         profile: {
-          projects: {
-            some: {
-              verificationStatus: "verified",
-              publishedState: "published",
-            },
+          select: {
+            userId: true,
           },
         },
       },
-      include: {
-        profile: true,
-      },
     })
 
-    if (!candidate || !candidate.profile) {
-      return NextResponse.json(
-        { error: "Candidate not found." },
-        { status: 404 }
-      )
-    }
+    // candidateIds are candidate user ids, the same ids used by
+    // /api/recruiter/candidates and /api/recruiter/shortlist/[candidateId]
+    const candidateIds = entries.map((entry) => entry.profile.userId)
 
-    const shortList = await prisma.shortList.create({
-      data: {
-        userId: recruiter.id,
-        profileId: candidate.profile.id,
-      },
-    })
-
-    return NextResponse.json(
-      {
-        candidateId: candidate.id,
-        profileId: shortList.profileId,
-        createdAt: shortList.createdAt,
-      },
-      { status: 201 }
-    )
+    return NextResponse.json({ candidateIds }, { status: 200 })
   } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
-    ) {
-      return NextResponse.json(
-        { error: "You have already shortlisted this candidate." },
-        { status: 409 }
-      )
-    }
-
-    console.error("Shortlist candidate error:", error)
+    console.error("List shortlist error:", error)
 
     return NextResponse.json(
       { error: "Something went wrong. Please try again." },
