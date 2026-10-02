@@ -41,12 +41,14 @@ model User {
   password    String
   phoneNumber String?   @map("phone_number")
   createdAt   DateTime  @default(now()) @map("created_at")
+  emailVerifiedAt DateTime? @map("email_verified_at")
   
   profile     Profile?
   reviews     Review[]
   interests   Interest[]
   shortLists  ShortList[]
   passwordResetTokens PasswordResetToken[]
+  emailVerificationTokens EmailVerificationToken[]
   
   @@map("users")
 }
@@ -169,4 +171,19 @@ model PasswordResetToken {
 
   @@index([userId])
   @@map("password_reset_tokens")
+}
+
+// One-time tokens used to confirm a newly registered email address.
+// Only the SHA-256 hash is stored in the database.
+model EmailVerificationToken {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("email_verification_tokens")
 }

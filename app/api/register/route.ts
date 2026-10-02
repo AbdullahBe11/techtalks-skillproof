@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
+import { isEmailConfigured, sendEmail } from "@/lib/email"
+import {
+  EMAIL_VERIFICATION_TOKEN_TTL_MS,
+  buildEmailVerificationEmail,
+  generateEmailVerificationToken,
+} from "@/lib/email-verification"
+import { getAppUrl } from "@/lib/password-reset"
 
 // Only these roles can be picked during public sign-up.
 // "admin" is deliberately excluded — that account type should never
@@ -10,6 +17,26 @@ const ALLOWED_ROLES = ["candidate", "recruiter", "verifier"] as const
 export async function POST(request: Request) {
   try {
     const body = await request.json()
+
+    const appUrl = getAppUrl(request.url)
+    const emailReady = isEmailConfigured()
+
+    if (
+      !appUrl ||
+      (process.env.NODE_ENV === "production" && !emailReady)
+    ) {
+      console.error(
+        "Email verification is not configured: set APP_URL and SMTP_* environment variables."
+      )
+
+      return NextResponse.json(
+        {
+          error:
+            "Email verification isn't available right now. Please contact the SkillProof team.",
+        },
+        { status: 503 }
+      )
+    }
     const { name, email, password, phoneNumber, role } = body
 
     // 1. Make sure the required fields actually arrived
@@ -61,24 +88,69 @@ export async function POST(request: Request) {
     // 5. Hash the password — never store it as plain text
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // 6. Create the new user
-    const newUser = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        phoneNumber: phoneNumber || null,
-        role,
-      },
+    // 6. Create the user and its email-verification token together.
+    const { newUser, token } = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          name,
+          email,
+          password: hashedPassword,
+          phoneNumber: phoneNumber || null,
+          role,
+        },
+      })
+
+      const { token, tokenHash } = generateEmailVerificationToken()
+
+      await tx.emailVerificationToken.create({
+        data: {
+          userId: user.id,
+          tokenHash,
+          expiresAt: new Date(
+            Date.now() + EMAIL_VERIFICATION_TOKEN_TTL_MS
+          ),
+        },
+      })
+
+      return {
+        newUser: user,
+        token,
+      }
     })
 
-    // 7. Never send the password hash back to the client
+    const verificationUrl =
+      `${appUrl}/verify-email?token=${token}`
+
+    if (!emailReady) {
+      // Local development without SMTP: print the link in the terminal.
+      console.log(
+        `[dev] Email verification link for ${newUser.email}: ${verificationUrl}`
+      )
+    } else {
+      try {
+        const email = buildEmailVerificationEmail({
+          name: newUser.name,
+          verificationUrl,
+        })
+
+        await sendEmail({
+          to: newUser.email,
+          ...email,
+        })
+      } catch (error) {
+        console.error("Verification email failed:", error)
+      }
+    }
+
+    // 7. Never send the password hash back to the client.
+    // The user must verify the email before signing in.
     return NextResponse.json(
       {
         id: newUser.id,
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
+        message: "Check your inbox to confirm your email.",
       },
       { status: 201 }
     )

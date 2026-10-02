@@ -49,6 +49,7 @@ async function main() {
         password: await bcrypt.hash(SEED_DATA.candidate.password, saltRounds),
         role: SEED_DATA.candidate.role,
         phoneNumber: SEED_DATA.candidate.phoneNumber,
+        emailVerifiedAt: new Date(),
         profile: {
           create: {
             bio: 'Experienced developer with a passion for clean code and innovative solutions.',
@@ -66,6 +67,7 @@ async function main() {
         password: await bcrypt.hash(SEED_DATA.verifier.password, saltRounds),
         role: SEED_DATA.verifier.role,
         phoneNumber: SEED_DATA.verifier.phoneNumber,
+        emailVerifiedAt: new Date(),
         profile: {
           create: {
             bio: 'Senior verifier with expertise in code review and quality assurance.',
@@ -83,6 +85,7 @@ async function main() {
         password: await bcrypt.hash(SEED_DATA.recruiter.password, saltRounds),
         role: SEED_DATA.recruiter.role,
         phoneNumber: SEED_DATA.recruiter.phoneNumber,
+        emailVerifiedAt: new Date(),
         profile: {
           create: {
             bio: 'Talent acquisition specialist looking for top tech talent.',
