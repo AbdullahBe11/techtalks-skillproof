@@ -2,20 +2,12 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { signIn, getSession } from "next-auth/react"
 
 type Role = "candidate" | "recruiter" | "verifier"
 
 // Where each role lands after they're signed in. The client can't read the
 // role back from signIn()'s return value, so after a successful sign-in we
 // pull the session and use session.user.role to pick the destination.
-const ROLE_HOME: Record<Role, string> = {
-  candidate: "/candidate/projects",
-  recruiter: "/recruiter/browse",
-  verifier: "/verifier/queue",
-}
-
 const ROLE_OPTIONS: { value: Role; label: string; description: string }[] = [
   {
     value: "candidate",
@@ -114,7 +106,6 @@ function passwordStrength(value: string) {
 }
 
 export default function SignUpPage() {
-  const router = useRouter()
   const isDesktop = useIsDesktop()
 
   const [name, setName] = useState("")
@@ -129,6 +120,8 @@ export default function SignUpPage() {
   // "Try signing in instead." link under the email field (see the mockup).
   const [emailTaken, setEmailTaken] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [verificationSent, setVerificationSent] = useState(false)
+  const [verificationEmail, setVerificationEmail] = useState("")
 
   function clearFieldError(field: keyof FieldErrors) {
     setFieldErrors((prev) => {
@@ -176,25 +169,11 @@ export default function SignUpPage() {
         }),
       })
 
-      if (res.status === 201) {
-        // New account created — sign them straight in, then send them home.
-        const result = await signIn("credentials", {
-          email: email.trim(),
-          password,
-          redirect: false,
-        })
-
-        if (result?.error) {
-          // Account exists but auto sign-in didn't take; let them sign in by hand.
-          router.push("/signin")
-          return
-        }
-
-        const session = await getSession()
-        const sessionRole = (session?.user as { role?: Role } | undefined)?.role
-        router.push(sessionRole ? ROLE_HOME[sessionRole] : "/signin")
-        return
-      }
+if (res.status === 201) {
+  setVerificationEmail(email.trim())
+  setVerificationSent(true)
+  return
+}
 
       const data = (await res.json().catch(() => ({}))) as { error?: string }
       const message = data.error ?? "Something went wrong. Please try again."
@@ -319,7 +298,7 @@ export default function SignUpPage() {
           <p className="mt-1 text-center text-[13px] text-[#16231F]/55">
             Verified proof of your real work.
           </p>
-
+        <div className={verificationSent ? "hidden" : ""}>
           <h1
             className="mt-3.5 text-[18px] font-semibold text-[#16231F]"
             style={serif}
@@ -552,6 +531,42 @@ export default function SignUpPage() {
               Sign in
             </Link>
           </p>
+          </div>
+
+{verificationSent && (
+  <div className="mt-6">
+    <h1
+      className="text-[18px] font-semibold text-[#16231F]"
+      style={serif}
+    >
+      Check your inbox to confirm your email
+    </h1>
+
+    <p className="mt-3 text-[13px] leading-relaxed text-[#16231F]/70">
+      We sent a confirmation link to{" "}
+      <span className="font-medium text-[#16231F]">
+        {verificationEmail}
+      </span>
+      .
+    </p>
+
+    <p className="mt-2 text-[13px] leading-relaxed text-[#16231F]/70">
+      Open the link to activate your account. The link expires in 24 hours.
+    </p>
+
+    <p className="mt-4 text-[12.5px] leading-relaxed text-[#16231F]/55">
+      Didn&apos;t get it? Check your spam folder. After you try signing in,
+      you can request another confirmation email.
+    </p>
+
+    <Link
+      href="/signin"
+      className="mt-6 block w-full rounded bg-[#16231F] py-3 text-center text-[14px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+    >
+      Go to sign in
+    </Link>
+  </div>
+)}
         </div>
       </div>
     </div>
