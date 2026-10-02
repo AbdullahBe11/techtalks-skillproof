@@ -18,6 +18,7 @@ type CandidateProjectSummary = {
 type Candidate = {
   id: string
   name: string
+  headline?: string | null
   bio: string | null
   cvUrl: string | null
   projects: CandidateProjectSummary[]
@@ -180,6 +181,11 @@ function CandidateRow({
             {verifiedCount}{" "}
             {verifiedCount === 1 ? "verified project" : "verified projects"}
           </div>
+          {candidate.headline && (
+            <p className="break-words text-[13px] font-medium text-[#16231F]/75">
+              {candidate.headline}
+            </p>
+          )}
           {candidate.bio && (
             <p className="line-clamp-2 text-[13px] leading-relaxed text-[#16231F]/60">
               {candidate.bio}

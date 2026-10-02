@@ -30,8 +30,12 @@ type CandidateProject = {
 type CandidateProfile = {
   id: string
   name: string
+  headline?: string | null
   bio: string | null
   cvUrl: string | null
+  githubUrl?: string | null
+  linkedinUrl?: string | null
+  portfolioUrl?: string | null
   projects: CandidateProject[]
 }
 
@@ -533,7 +537,17 @@ export default function PublicCandidateProfilePage() {
   const hasSafeCvUrl = Boolean(
     candidate.cvUrl && isSafeExternalUrl(candidate.cvUrl)
   )
-  const hasProfileDetails = Boolean(candidate.bio) || hasSafeCvUrl
+  // Only http(s) links are ever rendered (javascript: etc. are dropped).
+  const profileLinks = [
+    { label: "GitHub", url: candidate.githubUrl },
+    { label: "LinkedIn", url: candidate.linkedinUrl },
+    { label: "Portfolio", url: candidate.portfolioUrl },
+  ].filter(
+    (link): link is { label: string; url: string } =>
+      Boolean(link.url) && isSafeExternalUrl(link.url as string)
+  )
+  const hasProfileDetails =
+    Boolean(candidate.bio) || hasSafeCvUrl || profileLinks.length > 0
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F6F4EE] text-[#16231F]">
@@ -546,6 +560,12 @@ export default function PublicCandidateProfilePage() {
         >
           {candidate.name}
         </h1>
+
+        {candidate.headline && (
+          <p className="mt-1 break-words text-[14.5px] text-[#16231F]/70">
+            {candidate.headline}
+          </p>
+        )}
 
         <div className="mt-2.5 flex items-center gap-1.5 rounded-full border border-[#2F6F52]/25 bg-[#2F6F52]/[0.08] px-2.5 py-1 text-[12px] font-medium text-[#2F6F52]">
           <CheckBadge className="h-3.5 w-3.5 bg-[#2F6F52]" strokeWidth={3} />
@@ -569,6 +589,21 @@ export default function PublicCandidateProfilePage() {
                 <DocumentIcon />
                 View CV
               </a>
+            )}
+            {profileLinks.length > 0 && (
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                {profileLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[13px] font-medium text-[#2F6F52] no-underline hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                  >
+                    {link.label} ↗
+                  </a>
+                ))}
+              </div>
             )}
           </div>
         )}

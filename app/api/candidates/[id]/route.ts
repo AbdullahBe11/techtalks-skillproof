@@ -60,8 +60,12 @@ export async function GET(
       {
         id: user.id,
         name: user.name,
+        headline: user.profile.headline,
         bio: user.profile.bio,
         cvUrl: user.profile.cvUrl,
+        githubUrl: user.profile.githubUrl,
+        linkedinUrl: user.profile.linkedinUrl,
+        portfolioUrl: user.profile.portfolioUrl,
         projects: user.profile.projects,
       },
       { status: 200 }
