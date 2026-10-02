@@ -59,6 +59,10 @@ model Profile {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   bio        String?
   cvUrl      String?  @map("cv_url")
+  headline     String?
+  githubUrl    String?  @map("github_url")
+  linkedinUrl  String?  @map("linkedin_url")
+  portfolioUrl String?  @map("portfolio_url")
   createdAt  DateTime @default(now()) @map("created_at")
   
   projects   Project[]

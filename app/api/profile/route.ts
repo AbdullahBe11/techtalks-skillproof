@@ -1,64 +1,77 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
-import { isSafeExternalUrl } from "@/lib/validation"
+import { parseProfileUpdate } from "@/lib/profile"
+
+type ProfileRow = {
+  id: string
+  userId: string
+  headline: string | null
+  bio: string | null
+  cvUrl: string | null
+  githubUrl: string | null
+  linkedinUrl: string | null
+  portfolioUrl: string | null
+}
+
+function toResponse(profile: ProfileRow) {
+  return {
+    id: profile.id,
+    userId: profile.userId,
+    headline: profile.headline,
+    bio: profile.bio,
+    cvUrl: profile.cvUrl,
+    githubUrl: profile.githubUrl,
+    linkedinUrl: profile.linkedinUrl,
+    portfolioUrl: profile.portfolioUrl,
+  }
+}
+
+// Resolves the signed-in candidate's user id, or the error response to return.
+async function requireCandidate(action: string) {
+  const session = await auth()
+
+  if (!session?.user) {
+    return {
+      error: NextResponse.json({ error: "Unauthorized." }, { status: 401 }),
+    }
+  }
+
+  const userId = (session.user as { id?: string }).id
+
+  if (!userId) {
+    return {
+      error: NextResponse.json({ error: "Unauthorized." }, { status: 401 }),
+    }
+  }
+
+  const userRole = (session.user as { role?: string }).role
+
+  if (userRole !== "candidate") {
+    return {
+      error: NextResponse.json(
+        { error: `Only candidates can ${action} their profile.` },
+        { status: 403 }
+      ),
+    }
+  }
+
+  return { userId }
+}
 
 export async function GET() {
   try {
-    // Check authentication
-    const session = await auth()
+    const candidate = await requireCandidate("view")
+    if (candidate.error) return candidate.error
 
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: "Unauthorized." },
-        { status: 401 }
-      )
-    }
-
-    // Only candidates have a profile
-    const userRole = (session.user as { role?: string }).role
-
-    if (userRole !== "candidate") {
-      return NextResponse.json(
-        { error: "Only candidates have a profile." },
-        { status: 403 }
-      )
-    }
-
-    // Find the signed-in user
-    const user = await prisma.user.findUnique({
-      where: {
-        email: session.user.email!,
-      },
-      include: {
-        profile: true,
-      },
+    // Auto-create an empty profile the first time a candidate opens it
+    const profile = await prisma.profile.upsert({
+      where: { userId: candidate.userId },
+      update: {},
+      create: { userId: candidate.userId },
     })
 
-    if (!user) {
-      return NextResponse.json(
-        { error: "User not found." },
-        { status: 404 }
-      )
-    }
-
-    // Auto-create an empty profile the first time a candidate hits this
-    const profile =
-      user.profile ??
-      (await prisma.profile.create({
-        data: {
-          userId: user.id,
-        },
-      }))
-
-    return NextResponse.json(
-      {
-        id: profile.id,
-        bio: profile.bio,
-        cvUrl: profile.cvUrl,
-      },
-      { status: 200 }
-    )
+    return NextResponse.json(toResponse(profile), { status: 200 })
   } catch (error) {
     console.error("Get profile error:", error)
 
@@ -71,28 +84,10 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
-    // Check authentication
-    const session = await auth()
+    const candidate = await requireCandidate("edit")
+    if (candidate.error) return candidate.error
 
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: "Unauthorized." },
-        { status: 401 }
-      )
-    }
-
-    // Only candidates can edit their profile
-    const userRole = (session.user as { role?: string }).role
-
-    if (userRole !== "candidate") {
-      return NextResponse.json(
-        { error: "Only candidates can edit their profile." },
-        { status: 403 }
-      )
-    }
-
-    // Get request body
-    let body
+    let body: unknown
 
     try {
       body = await request.json()
@@ -103,105 +98,21 @@ export async function PATCH(request: Request) {
       )
     }
 
-    if (typeof body !== "object" || body === null || Array.isArray(body)) {
-      return NextResponse.json(
-        { error: "Request body must be a JSON object." },
-        { status: 400 }
-      )
+    // Validates headline, bio and links; only the fields that were sent are
+    // updated, so a partial PATCH never clears the others.
+    const parsed = parseProfileUpdate(body)
+
+    if (!parsed.ok) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 })
     }
 
-    const { bio, cvUrl } = body
-
-    // bio, if provided, must be a string (or null, to clear it)
-    if (bio !== undefined && bio !== null && typeof bio !== "string") {
-      return NextResponse.json(
-        { error: "bio must be a string." },
-        { status: 400 }
-      )
-    }
-
-    // cvUrl, if provided, must be a well-formed URL (or null/empty, to clear it)
-    if (cvUrl !== undefined && cvUrl !== null) {
-      if (typeof cvUrl !== "string") {
-        return NextResponse.json(
-          { error: "cvUrl must be a string." },
-          { status: 400 }
-        )
-      }
-
-      if (cvUrl.trim()) {
-        try {
-          new URL(cvUrl)
-        } catch {
-          return NextResponse.json(
-            { error: "Invalid URL." },
-            { status: 400 }
-          )
-        }
-
-        // Reject non-http(s) schemes (e.g. `javascript:`) that `new URL()`
-        // parses successfully but are never legitimate CV links.
-        if (!isSafeExternalUrl(cvUrl.trim())) {
-          return NextResponse.json(
-            { error: "CV link must be a valid http or https URL." },
-            { status: 400 }
-          )
-        }
-      }
-    }
-
-    // Find the signed-in user
-    const user = await prisma.user.findUnique({
-      where: {
-        email: session.user.email!,
-      },
-      include: {
-        profile: true,
-      },
+    const profile = await prisma.profile.upsert({
+      where: { userId: candidate.userId },
+      update: parsed.data,
+      create: { userId: candidate.userId, ...parsed.data },
     })
 
-    if (!user) {
-      return NextResponse.json(
-        { error: "User not found." },
-        { status: 404 }
-      )
-    }
-
-    // Only update the fields that were actually provided
-    const data: { bio?: string | null; cvUrl?: string | null } = {}
-
-    if (bio !== undefined) {
-      data.bio = bio === null ? null : bio.trim() || null
-    }
-
-    if (cvUrl !== undefined) {
-      data.cvUrl = cvUrl === null ? null : cvUrl.trim() || null
-    }
-
-    // Create the profile if it doesn't exist yet (PATCH can arrive before
-    // GET ever has), otherwise update the existing one
-    const profile = user.profile
-      ? await prisma.profile.update({
-          where: {
-            id: user.profile.id,
-          },
-          data,
-        })
-      : await prisma.profile.create({
-          data: {
-            userId: user.id,
-            ...data,
-          },
-        })
-
-    return NextResponse.json(
-      {
-        id: profile.id,
-        bio: profile.bio,
-        cvUrl: profile.cvUrl,
-      },
-      { status: 200 }
-    )
+    return NextResponse.json(toResponse(profile), { status: 200 })
   } catch (error) {
     console.error("Update profile error:", error)
 

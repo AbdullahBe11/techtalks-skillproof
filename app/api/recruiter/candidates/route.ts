@@ -79,6 +79,7 @@ export async function GET(request: Request) {
     const result = matching.map((candidate) => ({
       id: candidate.id,
       name: candidate.name,
+      headline: candidate.profile!.headline,
       bio: candidate.profile!.bio,
       cvUrl: candidate.profile!.cvUrl,
       projects: candidate.profile!.projects,
