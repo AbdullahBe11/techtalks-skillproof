@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest"
-import { MAX_SKILLS, normalizeSkill, parseSkills, sameSkills } from "./skills"
+import {
+  MAX_SKILLS,
+  compactSkill,
+  normalizeSkill,
+  parseSkills,
+  projectMatchesQuery,
+  sameSkillLoose,
+  sameSkills,
+  skillMatchesQuery,
+} from "./skills"
 
 describe("normalizeSkill", () => {
   it("trims, collapses spaces and lowercases", () => {
@@ -36,5 +45,43 @@ describe("sameSkills", () => {
   it("ignores order", () => {
     expect(sameSkills(["a", "b"], ["b", "a"])).toBe(true)
     expect(sameSkills(["a"], ["a", "b"])).toBe(false)
+  })
+})
+
+describe("skill search matching", () => {
+  it("compacts spelling differences but keeps # and +", () => {
+    expect(compactSkill("Next.js")).toBe("nextjs")
+    expect(compactSkill("next js")).toBe("nextjs")
+    expect(compactSkill("next-js")).toBe("nextjs")
+    expect(compactSkill("C#")).toBe("c#")
+    expect(compactSkill("C++")).toBe("c++")
+  })
+
+  it("matches partial and loosely spelled queries", () => {
+    expect(skillMatchesQuery("next.js", "nex")).toBe(true)
+    expect(skillMatchesQuery("next.js", "nextjs")).toBe(true)
+    expect(skillMatchesQuery("typescript", "type script")).toBe(true)
+    expect(skillMatchesQuery("typescript", "Type")).toBe(true)
+    expect(skillMatchesQuery("python", "java")).toBe(false)
+    expect(skillMatchesQuery("python", "  ")).toBe(false)
+  })
+
+  it("compares a clicked skill loosely but not partially", () => {
+    expect(sameSkillLoose("next.js", "NextJS")).toBe(true)
+    expect(sameSkillLoose("next.js", "next")).toBe(false)
+    expect(sameSkillLoose("c#", "c++")).toBe(false)
+  })
+
+  it("matches a project by title, description or skill", () => {
+    const project = {
+      title: "SkillProof Platform",
+      description: "Verified projects for recruiters",
+      skills: ["next.js", "typescript"],
+    }
+    expect(projectMatchesQuery(project, "skillproof")).toBe(true)
+    expect(projectMatchesQuery(project, "recruiters")).toBe(true)
+    expect(projectMatchesQuery(project, "nextjs")).toBe(true)
+    expect(projectMatchesQuery(project, "type script")).toBe(true)
+    expect(projectMatchesQuery(project, "django")).toBe(false)
   })
 })
