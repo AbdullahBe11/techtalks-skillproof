@@ -348,7 +348,7 @@ export default function RecruiterCandidatesPage() {
         Browse candidates
       </h1>
       <p className="mt-1 text-[13px] text-[#16231F]/55">
-        Verified candidates across SkillProof, searchable by project keyword
+        Verified candidates across SkillProof, searchable by name, title, project keyword
         or skill.
       </p>
 
@@ -363,7 +363,7 @@ export default function RecruiterCandidatesPage() {
             setQuery(e.target.value)
             setActiveChipFilter(null)
           }}
-          placeholder="Search by keyword or skill…"
+          placeholder="Search by name, title, keyword or skill…"
           aria-label="Search verified candidates"
           className="w-full rounded border border-[#D8D3C4] bg-[#F6F4EE] py-2.5 pl-9 pr-3 text-[14px] text-[#16231F] outline-none transition-colors placeholder:text-[#16231F]/35 focus:border-[#2F6F52] focus:ring-1 focus:ring-[#2F6F52]"
         />

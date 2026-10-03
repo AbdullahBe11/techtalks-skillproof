@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
-import { projectMatchesQuery } from "@/lib/skills"
+import { candidateMatchesQuery } from "@/lib/skills"
 
 export async function GET(request: Request) {
   try {
@@ -67,11 +67,18 @@ export async function GET(request: Request) {
 
     // Keyword search runs here rather than in the database so skills can be
     // matched partially and loosely ("nex" or "nextjs" finds "next.js"),
-    // which Prisma can't do inside a Postgres text array.
+    // which Prisma can't do inside a Postgres text array. It also covers the
+    // candidate's name, headline and bio, not just their projects.
     const matching = keyword
       ? candidates.filter((candidate) =>
-          candidate.profile!.projects.some((project) =>
-            projectMatchesQuery(project, keyword)
+          candidateMatchesQuery(
+            {
+              name: candidate.name,
+              headline: candidate.profile!.headline,
+              bio: candidate.profile!.bio,
+              projects: candidate.profile!.projects,
+            },
+            keyword
           )
         )
       : candidates
