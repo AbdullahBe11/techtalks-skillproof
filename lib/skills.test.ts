@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
   MAX_SKILLS,
+  candidateMatchesQuery,
   compactSkill,
   normalizeSkill,
   parseSkills,
@@ -83,5 +84,38 @@ describe("skill search matching", () => {
     expect(projectMatchesQuery(project, "nextjs")).toBe(true)
     expect(projectMatchesQuery(project, "type script")).toBe(true)
     expect(projectMatchesQuery(project, "django")).toBe(false)
+  })
+})
+
+describe("candidateMatchesQuery", () => {
+  const candidate = {
+    name: "Abdullah Berro",
+    headline: "Full-Stack Developer | Team Lead",
+    bio: "I build reliable web apps.",
+    projects: [
+      { title: "SkillProof", description: null, skills: ["next.js"] },
+    ],
+  }
+
+  it("matches name, headline and bio", () => {
+    expect(candidateMatchesQuery(candidate, "berro")).toBe(true)
+    expect(candidateMatchesQuery(candidate, "full-stack")).toBe(true)
+    expect(candidateMatchesQuery(candidate, "team lead")).toBe(true)
+    expect(candidateMatchesQuery(candidate, "reliable")).toBe(true)
+  })
+
+  it("still matches projects and skills", () => {
+    expect(candidateMatchesQuery(candidate, "skillproof")).toBe(true)
+    expect(candidateMatchesQuery(candidate, "nextjs")).toBe(true)
+  })
+
+  it("does not match unrelated text or missing fields", () => {
+    expect(candidateMatchesQuery(candidate, "django")).toBe(false)
+    expect(
+      candidateMatchesQuery(
+        { name: "X", headline: null, bio: null, projects: [] },
+        "developer"
+      )
+    ).toBe(false)
   })
 })
