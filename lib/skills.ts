@@ -69,3 +69,24 @@ export function projectMatchesQuery(
     project.skills.some((skill) => skillMatchesQuery(skill, query))
   )
 }
+
+// True when a candidate's name, headline or bio contains the query, or any of
+// their projects matches it (title, description or skill).
+export function candidateMatchesQuery(
+  candidate: {
+    name: string
+    headline?: string | null
+    bio?: string | null
+    projects: { title: string; description: string | null; skills: string[] }[]
+  },
+  query: string
+): boolean {
+  const text = query.trim().toLowerCase()
+  if (!text) return true
+  return (
+    candidate.name.toLowerCase().includes(text) ||
+    (candidate.headline ?? "").toLowerCase().includes(text) ||
+    (candidate.bio ?? "").toLowerCase().includes(text) ||
+    candidate.projects.some((project) => projectMatchesQuery(project, query))
+  )
+}
