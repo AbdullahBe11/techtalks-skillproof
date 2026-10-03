@@ -659,12 +659,6 @@ export default function PublicCandidateProfilePage() {
                     : "Express interest"}
               </button>
 
-              {interestStatus === "success" && candidateEmail && (
-                <span className="flex items-center rounded border border-[#D8D3C4] bg-white/30 px-4 py-2.5 text-[13px] text-[#16231F]/75">
-                  {candidateEmail}
-                </span>
-              )}
-
               <button
                 type="button"
                 onClick={handleShortlist}
@@ -678,6 +672,18 @@ export default function PublicCandidateProfilePage() {
                     : "Add to shortlist"}
               </button>
             </div>
+
+            {interestStatus === "success" && candidateEmail && (
+              <div className="mt-3 text-[13px] text-[#16231F]/75">
+                <span>Contact: </span>
+                <a
+                  href={`mailto:${candidateEmail}`}
+                  className="font-medium text-[#2F6F52] no-underline hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                >
+                  {candidateEmail}
+                </a>
+              </div>
+            )}
 
             {actionError && (
               <div
