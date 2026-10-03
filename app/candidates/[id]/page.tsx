@@ -284,6 +284,8 @@ export default function PublicCandidateProfilePage() {
     "idle" | "loading" | "success"
   >("idle")
 
+  const [candidateEmail, setCandidateEmail] = useState<string | null>(null)
+
   const [shortlistStatus, setShortlistStatus] = useState<
     "idle" | "loading" | "success"
   >("idle")
@@ -380,6 +382,37 @@ export default function PublicCandidateProfilePage() {
       cancelled = true
     }
   }, [candidateId])
+
+  useEffect(() => {
+    if (interestStatus !== "success") return
+
+    let cancelled = false
+
+    async function loadCandidateContact() {
+      try {
+        const res = await fetch(
+          `/api/recruiter/candidates/${candidateId}/contact`
+        )
+
+        const data = await res.json().catch(() => ({}))
+
+        if (cancelled) return
+
+        if (res.ok && typeof data.email === "string") {
+          setCandidateEmail(data.email)
+        }
+      } catch {
+        // Keep the email hidden if the contact request fails.
+      }
+    }
+
+    loadCandidateContact()
+
+    return () => {
+      cancelled = true
+    }
+  }, [candidateId, interestStatus])
+
   useEffect(() => {
   let cancelled = false
 
@@ -625,6 +658,12 @@ export default function PublicCandidateProfilePage() {
                     ? "Interested ✓"
                     : "Express interest"}
               </button>
+
+              {interestStatus === "success" && candidateEmail && (
+                <span className="flex items-center rounded border border-[#D8D3C4] bg-white/30 px-4 py-2.5 text-[13px] text-[#16231F]/75">
+                  {candidateEmail}
+                </span>
+              )}
 
               <button
                 type="button"
