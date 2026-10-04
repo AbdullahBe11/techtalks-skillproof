@@ -136,10 +136,7 @@ export default async function Home() {
                     Verified
                   </span>
                   <span className="rounded-full border border-[#D8D3C4] px-2 py-1 text-[#16231F]/60">
-                    Code Quality 8/10
-                  </span>
-                  <span className="rounded-full border border-[#D8D3C4] px-2 py-1 text-[#16231F]/60">
-                    Ownership 9/10
+                    Verification passed
                   </span>
                 </div>
               </div>
@@ -217,7 +214,7 @@ export default async function Home() {
               </h3>
               <p className="mt-2 text-[13px] leading-6 text-[#16231F]/60">
                 A named verifier reviews the actual work and records structured
-                feedback and scores.
+                feedback and a clear verification result.
               </p>
             </div>
 
