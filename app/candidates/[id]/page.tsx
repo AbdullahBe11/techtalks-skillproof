@@ -6,6 +6,7 @@ import { useParams } from "next/navigation"
 
 import EmptyState from "@/app/components/EmptyState"
 import { CheckBadge } from "@/app/components/AppShell"
+import PublicHeader from "@/app/components/PublicHeader"
 import { isSafeExternalUrl } from "@/lib/validation"
 import { SkillChips } from "@/app/components/SkillTags"
 
@@ -161,34 +162,6 @@ function EvidenceTypeIcon({ type }: { type: EvidenceType }) {
   )
 }
 
-function PublicHeader() {
-  return (
-    <header className="bg-[#16231F] text-[#F6F4EE]">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <Link
-            href="/projects"
-            className="flex items-center gap-1 text-[13px] text-[#F6F4EE]/75 no-underline hover:text-[#F6F4EE] focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2 focus-visible:rounded-sm"
-          >
-            <span aria-hidden="true">←</span> Browse verified projects
-          </Link>
-          <div className="flex items-center gap-2">
-            <CheckBadge />
-            <span className="text-lg font-semibold" style={serif}>
-              SkillProof
-            </span>
-          </div>
-        </div>
-        <Link
-          href="/signin"
-          className="rounded border border-[#F6F4EE]/35 px-2.5 py-1.5 text-sm text-[#F6F4EE] hover:bg-[#F6F4EE]/10 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
-        >
-          Sign in
-        </Link>
-      </div>
-    </header>
-  )
-}
 
 // Project rows fade + rise in once on load, with a small stagger — a plain
 // ease-out (not the decision screen's overshoot, not the search page's fast
@@ -414,42 +387,42 @@ export default function PublicCandidateProfilePage() {
   }, [candidateId, interestStatus])
 
   useEffect(() => {
-  let cancelled = false
+    let cancelled = false
 
-  async function loadRecruiterShortlistState() {
-    setShortlistStatus("idle")
+    async function loadRecruiterShortlistState() {
+      setShortlistStatus("idle")
 
-    try {
-      const res = await fetch("/api/recruiter/shortlist")
-      const data = await res.json().catch(() => ({}))
+      try {
+        const res = await fetch("/api/recruiter/shortlist")
+        const data = await res.json().catch(() => ({}))
 
-      if (cancelled) return
+        if (cancelled) return
 
-      if (!res.ok) {
-        return
+        if (!res.ok) {
+          return
+        }
+
+        const candidateIds = Array.isArray(
+          (data as { candidateIds?: unknown }).candidateIds
+        )
+          ? (data as { candidateIds: unknown[] }).candidateIds
+          : []
+
+        if (candidateIds.includes(candidateId)) {
+          setShortlistStatus("success")
+        }
+      } catch {
+        // Leave the shortlist button in its default state
+        // if the initial status request fails.
       }
-
-      const candidateIds = Array.isArray(
-        (data as { candidateIds?: unknown }).candidateIds
-      )
-        ? (data as { candidateIds: unknown[] }).candidateIds
-        : []
-
-      if (candidateIds.includes(candidateId)) {
-        setShortlistStatus("success")
-      }
-    } catch {
-      // Leave the shortlist button in its default state
-      // if the initial status request fails.
     }
-  }
 
-  loadRecruiterShortlistState()
+    loadRecruiterShortlistState()
 
-  return () => {
-    cancelled = true
-  }
-}, [candidateId])
+    return () => {
+      cancelled = true
+    }
+  }, [candidateId])
 
   async function handleInterest() {
     setInterestStatus("loading")
@@ -534,7 +507,7 @@ export default function PublicCandidateProfilePage() {
   if (loadError) {
     return (
       <div className="flex min-h-screen flex-col bg-[#F6F4EE] text-[#16231F]">
-        <PublicHeader />
+        <PublicHeader showBrowseLink />
         <main className="mx-auto w-full max-w-5xl flex-1 overflow-x-hidden px-4 py-8">
           <div
             role="alert"
@@ -558,7 +531,7 @@ export default function PublicCandidateProfilePage() {
   if (candidate === null) {
     return (
       <div className="flex min-h-screen flex-col bg-[#F6F4EE] text-[#16231F]">
-        <PublicHeader />
+        <PublicHeader showBrowseLink />
         <main className="mx-auto w-full max-w-5xl flex-1 overflow-x-hidden px-4 py-8">
           <p role="status" className="text-[13px] text-[#16231F]/55">Loading…</p>
         </main>
@@ -584,7 +557,7 @@ export default function PublicCandidateProfilePage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F6F4EE] text-[#16231F]">
-      <PublicHeader />
+      <PublicHeader showBrowseLink />
 
       <main className="mx-auto w-full max-w-5xl flex-1 overflow-x-hidden px-4 py-8">
         <h1

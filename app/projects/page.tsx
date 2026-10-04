@@ -5,6 +5,7 @@ import Link from "next/link"
 
 import EmptyState from "@/app/components/EmptyState"
 import { CheckBadge } from "@/app/components/AppShell"
+import PublicHeader from "@/app/components/PublicHeader"
 import { SkillChips } from "@/app/components/SkillTags"
 
 type PublicProject = {
@@ -94,26 +95,6 @@ function useCrossfadeText(value: string, ms: number, reducedMotion: boolean) {
   return { shown: state.shown, opacity: state.fading ? 0 : 1 }
 }
 
-function PublicHeader() {
-  return (
-    <header className="bg-[#16231F] text-[#F6F4EE]">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-2">
-          <CheckBadge />
-          <span className="text-lg font-semibold" style={serif}>
-            SkillProof
-          </span>
-        </div>
-        <Link
-          href="/signin"
-          className="rounded border border-[#F6F4EE]/35 px-2.5 py-1.5 text-sm text-[#F6F4EE] hover:bg-[#F6F4EE]/10 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
-        >
-          Sign in
-        </Link>
-      </div>
-    </header>
-  )
-}
 
 // A single result row. Its own height/opacity animates in and out via the
 // CSS Grid `grid-template-rows: 1fr` / `0fr` technique so it collapses in
@@ -236,7 +217,7 @@ export default function PublicProjectsPage() {
         if (!res.ok) {
           setError(
             (data as { error?: string }).error ??
-              "Something went wrong. Please try again."
+            "Something went wrong. Please try again."
           )
           setInitialLoading(false)
           return
