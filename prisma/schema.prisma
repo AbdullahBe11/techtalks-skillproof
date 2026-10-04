@@ -49,6 +49,7 @@ model User {
   shortLists  ShortList[]
   passwordResetTokens PasswordResetToken[]
   emailVerificationTokens EmailVerificationToken[]
+  verifiedProjects Project[] @relation("ProjectVerifier")
   
   @@map("users")
 }
@@ -86,6 +87,9 @@ model Project {
   
   evidence        Evidence[]
   reviews         Review[]
+  verifiedById String?   @map("verified_by_id")
+  verifiedAt   DateTime? @map("verified_at")
+  verifiedBy   User?     @relation("ProjectVerifier", fields: [verifiedById], references: [id], onDelete: SetNull)
   
   @@map("projects")
 }

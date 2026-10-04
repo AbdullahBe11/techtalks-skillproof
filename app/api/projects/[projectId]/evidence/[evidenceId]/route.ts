@@ -98,6 +98,23 @@ export async function DELETE(
       },
     })
 
+    // Reset verification when evidence changes
+    if (
+      project.verificationStatus === "verified" ||
+      project.verificationStatus === "rejected"
+    ) {
+      await prisma.project.update({
+        where: {
+          id: projectId,
+        },
+        data: {
+          verificationStatus: "pending",
+          verifiedById: null,
+          verifiedAt: null,
+        },
+      })
+    }
+
     return NextResponse.json(
       { message: "Evidence deleted successfully." },
       { status: 200 }

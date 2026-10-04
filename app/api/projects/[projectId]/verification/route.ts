@@ -107,8 +107,10 @@ export async function PATCH(
       },
       data: {
         verificationStatus:
-          verificationStatus as VerificationStatus,
+        verificationStatus as VerificationStatus,
         reviewerFeedback,
+        verifiedById: session.user.id,
+        verifiedAt: new Date(),
       },
     })
 

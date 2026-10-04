@@ -457,6 +457,10 @@ export default function VerifierReviewPage() {
         Submitted by {project.candidateName} · {formatDate(project.createdAt)}
       </p>
 
+      <p className="mt-1 text-[12px] text-[#16231F]/50">
+        Your name will be shown publicly on projects you verify.
+      </p>
+
       {project.description && (
         <p className="mt-3 text-[14px] leading-relaxed text-[#16231F]/80">
           {project.description}
