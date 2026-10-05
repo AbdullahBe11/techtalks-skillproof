@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { VerificationStatus } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
+import { verificationBlockReason } from "@/lib/verification"
 
 
 export async function PATCH(
@@ -13,6 +14,15 @@ export async function PATCH(
     const session = await auth()
 
     if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized." },
+        { status: 401 }
+      )
+    }
+
+    const verifierId = session.user.id
+
+    if (!verifierId) {
       return NextResponse.json(
         { error: "Unauthorized." },
         { status: 401 }
@@ -91,6 +101,11 @@ export async function PATCH(
       where: {
         id: projectId,
       },
+      select: {
+        id: true,
+        profile: { select: { userId: true } },
+        _count: { select: { evidence: true } },
+      },
     })
 
     if (!project) {
@@ -98,6 +113,17 @@ export async function PATCH(
         { error: "Project not found." },
         { status: 404 }
       )
+    }
+
+    // No self-verification, and nothing to verify without evidence
+    const blockReason = verificationBlockReason({
+      verifierId,
+      ownerUserId: project.profile.userId,
+      evidenceCount: project._count.evidence,
+    })
+
+    if (blockReason) {
+      return NextResponse.json({ error: blockReason }, { status: 403 })
     }
 
     // Update verification status and feedback
@@ -109,7 +135,7 @@ export async function PATCH(
         verificationStatus:
         verificationStatus as VerificationStatus,
         reviewerFeedback,
-        verifiedById: session.user.id,
+        verifiedById: verifierId,
         verifiedAt: new Date(),
       },
     })

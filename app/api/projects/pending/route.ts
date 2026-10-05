@@ -14,6 +14,15 @@ export async function GET() {
       )
     }
 
+    const verifierId = session.user.id
+
+    if (!verifierId) {
+      return NextResponse.json(
+        { error: "Unauthorized." },
+        { status: 401 }
+      )
+    }
+
     // Only verifiers can view the review queue
     const userRole = (session.user as { role?: string }).role
 
@@ -24,10 +33,13 @@ export async function GET() {
       )
     }
 
-    // Get all pending projects, oldest submissions first
+    // Pending projects that have evidence to review, oldest first.
+    // A verifier's own projects are left out so they can't review them.
     const projects = await prisma.project.findMany({
       where: {
         verificationStatus: "pending",
+        evidence: { some: {} },
+        profile: { userId: { not: verifierId } },
       },
       orderBy: {
         createdAt: "asc",
