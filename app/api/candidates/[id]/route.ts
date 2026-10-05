@@ -32,6 +32,12 @@ export async function GET(
                 description: true,
                 skills: true,
                 createdAt: true,
+                verifiedAt: true,
+                verifiedBy: {
+                  select: {
+                    name: true,
+                  },
+                },
                 evidence: {
                   select: {
                     id: true,

@@ -239,6 +239,8 @@ export async function PATCH(
       description?: string | null
       skills?: string[]
       verificationStatus?: "pending"
+      verifiedById?: string | null
+      verifiedAt?: Date | null
       publishedState?: ToggleState
     } = {}
 
@@ -259,6 +261,8 @@ export async function PATCH(
     }
     if ((project.verificationStatus === "rejected" ||project.verificationStatus === "verified") &&hasContentChange) {
       data.verificationStatus = "pending"
+      data.verifiedById = null
+      data.verifiedAt = null
     }
 
     // Update the project
