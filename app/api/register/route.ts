@@ -10,9 +10,9 @@ import {
 import { getAppUrl } from "@/lib/password-reset"
 
 // Only these roles can be picked during public sign-up.
-// "admin" is deliberately excluded — that account type should never
-// be created through a form anyone can reach.
-const ALLOWED_ROLES = ["candidate", "recruiter", "verifier"] as const
+// "admin" and "verifier" are deliberately excluded: verifiers are approved by
+// the team and promoted manually in the database (see DEPLOYMENT.md).
+const ALLOWED_ROLES = ["candidate", "recruiter"] as const
 
 export async function POST(request: Request) {
   try {
@@ -47,7 +47,18 @@ export async function POST(request: Request) {
       )
     }
 
-    // 2. Reject anything that isn't one of the allowed roles
+    // 2. Verifier accounts are never created through public sign-up
+    if (role === "verifier") {
+      return NextResponse.json(
+        {
+          error:
+            "Verifier accounts can't be created through sign-up. Email us to request access.",
+        },
+        { status: 403 }
+      )
+    }
+
+    // Reject anything that isn't one of the allowed roles
     if (!ALLOWED_ROLES.includes(role)) {
       return NextResponse.json(
         { error: "Invalid role." },

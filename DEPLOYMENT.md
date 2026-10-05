@@ -89,6 +89,77 @@ Apply pending migrations **before** deploying the code that depends on
 them, so the API doesn't briefly serve requests against a schema it
 doesn't expect yet.
 
+## Approving a verifier account
+
+Verifier is **not** available at sign-up (UI or API). People request access by
+email, the team reviews their credentials and background, and only then does
+someone with database access promote the account. This stops a candidate from
+verifying their own work.
+
+All of these run in the Neon SQL Editor against the shared database, so every
+change is live immediately.
+
+1. **Ask the requester to sign up normally** and confirm their email. A
+   recruiter account is cleanest, since it has no projects.
+
+2. **Find the account and check it is ready:**
+
+```
+   SELECT id, name, email, role, email_verified_at
+   FROM users WHERE email = 'person@example.com';
+```
+
+   `email_verified_at` must not be empty.
+
+3. **Check the account owns no projects.** Verifiers can review any project, so
+   an account with its own projects must not be promoted (ask for a separate
+   email instead):
+
+```
+   SELECT COUNT(*) FROM projects p
+   JOIN profiles pr ON pr.id = p.profile_id
+   WHERE pr.user_id = '<id from step 2>';
+```
+
+   The result must be `0`.
+
+4. **Promote the account** (use the id, not the email, to avoid typos):
+
+```
+   UPDATE users SET role = 'verifier'
+   WHERE id = '<id from step 2>' AND role <> 'admin'
+   RETURNING id, email, role;
+```
+
+5. **Tell them to sign out and sign back in.** The role is stored in their
+   session at sign-in, so the change only applies after a fresh login.
+
+6. **Record the approval** (who approved, when, and why) in the team's usual
+   channel.
+
+### Removing verifier access
+
+```
+UPDATE users SET role = 'candidate' WHERE id = '<id>' RETURNING id, email, role;
+```
+
+Projects they already verified keep their `verified_by_id`, so review those
+before deciding whether to re-open them.
+
+### Reviewing existing verifiers
+
+```
+SELECT u.id, u.name, u.email, u.created_at, COUNT(p.id) AS projects_verified
+FROM users u
+LEFT JOIN projects p ON p.verified_by_id = u.id
+WHERE u.role = 'verifier'
+GROUP BY u.id
+ORDER BY u.created_at;
+```
+
+Compare the list against who the team actually approved. Downgrade anyone who
+was not approved with the "Removing verifier access" query.
+
 ## How to verify the deploy actually worked
 
 The Vercel CLI saying "Ready" is not enough — it only means the build
