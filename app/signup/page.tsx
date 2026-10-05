@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
-type Role = "candidate" | "recruiter" | "verifier"
+type Role = "candidate" | "recruiter"
+
+// TODO: replace with the team's real contact address
+const VERIFIER_ACCESS_EMAIL = "Skillproof512@gmail.com"
 
 // Where each role lands after they're signed in. The client can't read the
 // role back from signIn()'s return value, so after a successful sign-in we
@@ -18,11 +21,6 @@ const ROLE_OPTIONS: { value: Role; label: string; description: string }[] = [
     value: "recruiter",
     label: "Recruiter",
     description: "Search for candidates and review proof of what they've built.",
-  },
-  {
-    value: "verifier",
-    label: "Verifier",
-    description: "Check submitted work and confirm it's genuine.",
   },
 ]
 
@@ -505,6 +503,16 @@ if (res.status === 201) {
                 <p className={fieldErrorClass}>{fieldErrors.role}</p>
               )}
             </fieldset>
+                        <p className="text-[12.5px] text-[#16231F]/60">
+              Want to verify projects? Email us at{" "}
+              <a
+                href={`mailto:${VERIFIER_ACCESS_EMAIL}`}
+                className="font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+              >
+                {VERIFIER_ACCESS_EMAIL}
+              </a>
+              .
+            </p>
 
             <button
               type="submit"
