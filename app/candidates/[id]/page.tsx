@@ -25,6 +25,10 @@ type CandidateProject = {
   description: string | null
   skills: string[]
   createdAt: string
+  verifiedAt: string | null
+  verifiedBy: {
+    name: string | null
+  } | null
   evidence: CandidateEvidence[]
 }
 
@@ -206,7 +210,13 @@ function ProjectRow({
           {project.title}
         </p>
         <p className="text-[12.5px] text-[#16231F]/55">
-          Verified project · {formatDate(project.createdAt)}
+          {project.verifiedBy?.name
+            ? `Verified by ${project.verifiedBy.name}${
+              project.verifiedAt ? ` · ${formatDate(project.verifiedAt)}` : ""
+            }`
+            : project.verifiedAt
+              ? `Verified · ${formatDate(project.verifiedAt)}`
+              : "Verified"}
         </p>
         {project.description && (
           <p className="line-clamp-2 text-[13px] leading-relaxed text-[#16231F]/60">

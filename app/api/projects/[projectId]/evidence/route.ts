@@ -144,6 +144,23 @@ export async function POST(
       },
     })
 
+    // Reset verification when evidence changes
+    if (
+      project.verificationStatus === "verified" ||
+      project.verificationStatus === "rejected"
+    ) {
+      await prisma.project.update({
+        where: {
+          id: projectId,
+        },
+        data: {
+          verificationStatus: "pending",
+          verifiedById: null,
+          verifiedAt: null,
+        },
+      })
+    }
+
     return NextResponse.json(evidence, { status: 201 })
   } catch (error) {
     console.error("Create evidence error:", error)
