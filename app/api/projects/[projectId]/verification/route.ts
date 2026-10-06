@@ -2,6 +2,7 @@ import { NextResponse, after } from "next/server"
 import { auth } from "@/auth"
 import { VerificationStatus } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
+import { verificationBlockReason } from "@/lib/verification"
 import { isEmailConfigured, sendEmail } from "@/lib/email"
 import { buildVerificationResultEmail } from "@/lib/verification-result-email"
 import { getAppUrl } from "@/lib/password-reset"
@@ -15,6 +16,15 @@ export async function PATCH(
     const session = await auth()
 
     if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized." },
+        { status: 401 }
+      )
+    }
+
+    const verifierId = session.user.id
+
+    if (!verifierId) {
       return NextResponse.json(
         { error: "Unauthorized." },
         { status: 401 }
@@ -89,21 +99,34 @@ export async function PATCH(
     }
 
     // Check that the project exists.
-    // Include the candidate's name and email so we don't need
-    // a second database query when sending the TS-64 email.
+    // Use `select` so we get:
+    //   - the owner (profile.userId) for the self-verification guard,
+    //   - the evidence count for the evidence guard (TS-63),
+    //   - the candidate's name and email for the TS-64 email,
+    //   - the current verification status so we only email on change,
+    //   - the title for the email.
     const project = await prisma.project.findUnique({
       where: {
         id: projectId,
       },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        verificationStatus: true,
         profile: {
-          include: {
+          select: {
+            userId: true,
             user: {
               select: {
                 name: true,
                 email: true,
               },
             },
+          },
+        },
+        _count: {
+          select: {
+            evidence: true,
           },
         },
       },
@@ -116,6 +139,18 @@ export async function PATCH(
       )
     }
 
+    // TS-63 guard: a verifier must never decide on their own work,
+    // and a project must have evidence before it can be verified.
+    const blockReason = verificationBlockReason({
+      verifierId,
+      ownerUserId: project.profile.userId,
+      evidenceCount: project._count.evidence,
+    })
+
+    if (blockReason) {
+      return NextResponse.json({ error: blockReason }, { status: 403 })
+    }
+
     // Update verification status and feedback
     const updatedProject = await prisma.project.update({
       where: {
@@ -125,7 +160,7 @@ export async function PATCH(
         verificationStatus:
           verificationStatus as VerificationStatus,
         reviewerFeedback,
-        verifiedById: session.user.id,
+        verifiedById: verifierId,
         verifiedAt: new Date(),
       },
     })
