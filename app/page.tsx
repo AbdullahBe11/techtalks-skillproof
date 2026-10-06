@@ -279,9 +279,26 @@ export default async function Home() {
       </section>
 
       <footer className="border-t border-[#D8D3C4] px-5 py-6 sm:px-8">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 text-[12px] text-[#16231F]/50 sm:flex-row sm:items-center sm:justify-between">
-          <span>SkillProof</span>
-          <span>Verified proof of real work.</span>
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 text-[12px] text-[#16231F]/50 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
+            <span>SkillProof</span>
+            <span className="hidden sm:inline">·</span>
+            <span>Verified proof of real work.</span>
+          </div>
+          <div className="flex gap-4">
+            <Link
+              href="/privacy"
+              className="rounded hover:text-[#16231F] focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/terms"
+              className="rounded hover:text-[#16231F] focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+            >
+              Terms
+            </Link>
+          </div>
         </div>
       </footer>
     </main>
