@@ -514,6 +514,24 @@ if (res.status === 201) {
               .
             </p>
 
+                        <p className="text-[12.5px] leading-5 text-[#16231F]/60">
+              By signing up you agree to our{" "}
+              <Link
+                href="/terms"
+                className="font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+              >
+                Terms
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/privacy"
+                className="font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </p>
+
             <button
               type="submit"
               disabled={submitting}
