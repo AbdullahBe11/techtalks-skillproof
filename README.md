@@ -1,29 +1,47 @@
-# Skill Proof 🚀
+# SkillProof 🚀
 
-> **Bridging the trust gap in software hiring through verified, human-evaluated project profiles.**
+> **Bridging the trust gap in software hiring through verified, human-reviewed project profiles.**
+
+🌐 **Live app:** https://techtalks-skillproof.vercel.app
 
 ## 📌 Project Overview
 
-**Skill Proof** is a web platform designed for the Lebanese tech ecosystem that replaces unverified traditional CVs with rubric-scored project profiles.
+**SkillProof** is a web platform for the Lebanese tech ecosystem that replaces unverified CVs with **verified project profiles**.
 
-It enables university students and recent software graduates to showcase their true technical capabilities while helping recruiters shortlist verified candidates faster and with greater confidence.
+Candidates (students and recent graduates) add the projects they built, with evidence such as repository links and live demos. An approved, **named verifier** reviews the actual work and marks each project as verified or not. Recruiters then search verified candidates by skill and reach out directly.
+
+Built during the **TechTalks internship (Next.js track)**.
 
 ---
 
-## ✨ Approved MVP
+## ✨ Features
 
-- 👨‍💻 Developer Project Profiles
-- 📊 Rubric-Based Evaluation
-- 🔎 Recruiter Discovery Dashboard
-- 🤝 Direct Connect Flow
+### Candidates
+- Create projects with skills and evidence links (repo, demo, docs)
+- Publish or withdraw projects, and see each verification result and feedback
+- Profile with headline, bio and links (CV, GitHub, LinkedIn, portfolio)
+- Public profile page showing verified projects: **"Verified by [name] · [date]"**
+- "Interested recruiters" page, plus an email when a recruiter shows interest
+- Email when a project is verified or rejected
 
-### Out of Scope for V1
+### Verifiers
+- Review queue of pending projects that have evidence
+- Approve or reject with written feedback
+- Can't verify their own projects; verifier accounts are approved by the team (no public sign-up)
 
-- AI-assisted grading
-- Employer-submitted project challenges
-- Payments
-- Partner bootcamps
-- Advanced/automated matching
+### Recruiters
+- Browse and search verified candidates by skill, name, headline or bio (flexible matching, e.g. "nextjs" finds "Next.js")
+- Express interest, which unlocks the candidate's contact email
+- Shortlist candidates
+
+### Accounts & security
+- Sign up as candidate or recruiter, with email verification
+- Forgot password / reset by email link
+- Verification resets automatically when a project's content or evidence changes
+- Evidence links limited to http(s) to protect verifiers
+
+### Out of scope for V1
+- Rubric scoring, AI-assisted grading, employer challenges, payments, automated matching
 
 ---
 
@@ -31,12 +49,14 @@ It enables university students and recent software graduates to showcase their t
 
 | Area | Technology |
 |------|------------|
-| Frontend | Next.js / React |
-| Styling | Tailwind CSS |
-| Backend | Node.js / Express |
-| Database | PostgreSQL |
-| Authentication | Token-based Authentication |
+| Framework | Next.js 16 (App Router, API routes) + React + TypeScript |
+| Styling | Tailwind CSS 4 |
+| Database | PostgreSQL (Neon) via Prisma 5 |
+| Authentication | NextAuth v5 (credentials, JWT sessions) |
+| Email | Nodemailer (SMTP) |
+| Testing | Vitest + ESLint, run in GitHub Actions CI on every PR |
 | Deployment | Vercel |
+| Project management | Jira (Scrum, weekly sprints) |
 
 ---
 
@@ -47,9 +67,9 @@ It enables university students and recent software graduates to showcase their t
 | **Abdullah Mohammad Berro** | Team Lead / Planning / Frontend / Backend |
 | **Abdallah Ahmad Khodor** | Backend Engineering |
 | **Ali Bakri** | Frontend Engineering |
-| **Youssef Dawoud** | Frontend Engineering |
 | **Jaafar Ali Khsheish** | Database Architecture |
 | **Jamila Hallal** | Database Architecture |
+| **Youssef Dawoud** | Frontend Engineering (early sprints) |
 
 ---
 
@@ -57,45 +77,63 @@ It enables university students and recent software graduates to showcase their t
 
 ### Prerequisites
 
-Make sure you have the following installed:
-
-- Node.js `>= v18.x.x`
+- Node.js `>= 20.9`
 - npm
-- PostgreSQL
 - Git
+- A PostgreSQL database (we use [Neon](https://neon.tech))
 
-### Clone the Repository
-
-```bash
-git clone <REPOSITORY_URL>
-cd skill-proof
-````
-
-### Install Dependencies
+### Clone and install
 
 ```bash
+git clone https://github.com/AbdullahBe11/techtalks-skillproof.git
+cd techtalks-skillproof
 npm install
 ```
 
-### Environment Variables
+### Environment variables
 
-Create a `.env` file using `.env.example`:
+Create a `.env` file from the example and fill in your own values:
 
 ```bash
 cp .env.example .env
 ```
 
-Add your local configuration to the `.env` file.
+| Variable | What it is |
+|----------|-----------|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `NEXTAUTH_SECRET` | Random secret for signing sessions |
+| `NEXTAUTH_URL` | App URL (e.g. `http://localhost:3000`) |
+| `APP_URL` | Public URL used in email links (required in production) |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM` | SMTP settings for emails (optional locally; emails are skipped and logged if not set) |
 
 > ⚠️ Never commit passwords, API keys, tokens, or database credentials.
 
-### Run the Application
+### Set up the database
+
+```bash
+npx prisma migrate deploy
+```
+
+> ⚠️ Our local and production environments currently share **one** database. Never run `prisma migrate dev`, `prisma migrate reset` or `npm run seed` against it, and never answer "yes" to a reset prompt. See [DEPLOYMENT.md](./DEPLOYMENT.md).
+
+### Run the app
 
 ```bash
 npm run dev
 ```
 
+Open http://localhost:3000.
+
+### Checks (same as CI)
+
+```bash
+npm run lint
+npm test
+npm run build
+```
+
 ---
+
 ## 🚢 Deployment
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for how to deploy to production, including why deploys are manual on this repo.
@@ -328,21 +366,21 @@ The Pull Request can then be merged into `main`.
 ## 📁 Project Structure
 
 ```text
-skill-proof/
-│
-├── frontend/
-│
-├── backend/
-│
-├── database/
-│
-├── .env.example
-├── .gitignore
-├── package.json
-└── README.md
+techtalks-skillproof/
+├── app/                 # Next.js App Router: pages and API routes
+│   ├── api/             # Backend endpoints (projects, recruiter, profile, auth, ...)
+│   ├── candidate/       # Candidate pages (projects, profile, interested recruiters)
+│   ├── candidates/[id]/ # Public candidate profile
+│   ├── recruiter/       # Recruiter dashboard
+│   ├── verifier/        # Verifier review queue
+│   └── components/      # Shared UI
+├── lib/                 # Business logic + unit tests (*.test.ts)
+├── prisma/              # Schema and migrations
+├── auth.ts              # NextAuth configuration
+├── middleware.ts        # Route protection by role
+└── DEPLOYMENT.md        # Deploy steps and verifier approval process
 ```
 
-> The project structure may evolve as development progresses.
 
 ---
 
@@ -371,7 +409,7 @@ Use `.env.example` with placeholders only:
 
 ```text
 DATABASE_URL=
-JWT_SECRET=
+NEXTAUTH_SECRET=
 ```
 
 ---
@@ -398,28 +436,30 @@ Candidate's contact info is shared with that recruiter
 
 ## 📊 Project Status
 
-**Status:** 🚧 In Progress
+**Status:** ✅ MVP complete and live — 4 sprints delivered
 
 ### Completed
 
-* [x] Product discovery
-* [x] Customer/problem validation
-* [x] Competitor research
-* [x] MVP definition
-* [x] Technical stack selection
-* [x] Team responsibilities
+* [x] Product discovery, problem validation and MVP definition
+* [x] Database schema and migrations
+* [x] Authentication with email verification and password reset
+* [x] Candidate project profiles with evidence
+* [x] Verifier review flow with named verifiers and team-approved verifier accounts
+* [x] Recruiter discovery, search, interest and shortlist
+* [x] Email notifications (interest, verification result)
+* [x] Automated tests and CI
+* [x] Deployment on Vercel
 
-### Planned
+### Future work (V2)
 
-* [ ] Database schema
-* [ ] Authentication
-* [ ] Candidate project profiles
-* [ ] Verifier evaluation system
-* [ ] Recruiter discovery dashboard
-* [ ] Candidate filtering
-* [ ] Recruiter interest flow
-* [ ] Testing
-* [ ] Deployment
+* [ ] Rubric-based scoring
+* [ ] Profile picture and CV upload
+* [ ] Work experience on profiles
+* [ ] Candidates can delete projects
+* [ ] Recruiter "My shortlist" page
+* [ ] Sign-in attempt limits
+* [ ] Privacy policy and terms pages
+
 
 ---
 
