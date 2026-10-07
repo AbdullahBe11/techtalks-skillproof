@@ -78,6 +78,15 @@ export default function PublicHeader({
                         </Link>
                     )}
 
+                    {authenticated && userRole === "recruiter" && (
+                    <Link
+                        href="/recruiter/shortlist"
+                        className="flex items-center gap-1 text-[13px] text-[#F6F4EE]/75 no-underline hover:text-[#F6F4EE] focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                    >
+                        My shortlist
+                    </Link>
+                )}
+
                     <div className="flex items-center gap-2">
                         <CheckBadge />
                         <span

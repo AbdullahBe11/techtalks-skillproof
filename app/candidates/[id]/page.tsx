@@ -532,10 +532,11 @@ export default function PublicCandidateProfilePage() {
               : loadError.message}
           </div>
           <Link
-            href="/projects"
+            href={isRecruiter ? "/recruiter/browse" : "/projects"}
             className="mt-4 inline-block text-[13px] text-[#2F6F52] font-medium border-b border-[#6FAE8E] pb-px no-underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
           >
-            <span aria-hidden="true">←</span> Browse verified projects
+            <span aria-hidden="true">←</span>{" "}
+            {isRecruiter ? "Back to browse candidates" : "Browse verified projects"}
           </Link>
         </main>
       </div>
