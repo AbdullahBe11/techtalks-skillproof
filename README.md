@@ -26,7 +26,7 @@ Built during the **TechTalks internship (Next.js track)**.
 
 ### Verifiers
 - Review queue of pending projects that have evidence
-- Approve or reject with written feedback
+- Score each project on a 4-criterion rubric (functionality, code quality, documentation, ownership), then approve or reject with written feedback
 - Can't verify their own projects; verifier accounts are approved by the team (no public sign-up)
 
 ### Recruiters
@@ -41,7 +41,7 @@ Built during the **TechTalks internship (Next.js track)**.
 - Evidence links limited to http(s) to protect verifiers
 
 ### Out of scope for V1
-- Rubric scoring, AI-assisted grading, employer challenges, payments, automated matching
+- AI-assisted grading, employer challenges, payments, automated matching
 
 ---
 
@@ -452,7 +452,6 @@ Candidate's contact info is shared with that recruiter
 
 ### Future work (V2)
 
-* [ ] Rubric-based scoring
 * [ ] Profile picture and CV upload
 * [ ] Work experience on profiles
 * [ ] Candidates can delete projects

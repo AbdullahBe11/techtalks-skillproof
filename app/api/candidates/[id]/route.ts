@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { currentScoreSummary } from "@/lib/rubric"
 
 export async function GET(
   request: Request,
@@ -33,6 +34,15 @@ export async function GET(
                 skills: true,
                 createdAt: true,
                 verifiedAt: true,
+                verifiedById: true,
+                reviews: {
+                  select: {
+                    userId: true,
+                    scores: {
+                      select: { criterionId: true, score: true },
+                    },
+                  },
+                },
                 verifiedBy: {
                   select: {
                     name: true,
@@ -72,7 +82,12 @@ export async function GET(
         githubUrl: user.profile.githubUrl,
         linkedinUrl: user.profile.linkedinUrl,
         portfolioUrl: user.profile.portfolioUrl,
-        projects: user.profile.projects,
+        projects: user.profile.projects.map(
+          ({ reviews, verifiedById, ...project }) => ({
+            ...project,
+            scores: currentScoreSummary(reviews, verifiedById),
+          })
+        ),
       },
       { status: 200 }
     )

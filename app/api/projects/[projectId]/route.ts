@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { parseSkills, sameSkills } from "@/lib/skills"
+import { currentScoreSummary } from "@/lib/rubric"
 
 export async function GET(
   request: Request,
@@ -77,7 +78,20 @@ export async function GET(
       },
     })
 
-    return NextResponse.json({ ...project, evidence }, { status: 200 })
+    // Rubric scores from the verifier who made the current decision (TS-49)
+    const reviews = await prisma.review.findMany({
+      where: { projectId },
+      select: {
+        userId: true,
+        scores: { select: { criterionId: true, score: true } },
+      },
+    })
+    const scores = currentScoreSummary(reviews, project.verifiedById)
+
+    return NextResponse.json(
+      { ...project, evidence, scores },
+      { status: 200 }
+    )
   } catch (error) {
     console.error("Get project error:", error)
 
