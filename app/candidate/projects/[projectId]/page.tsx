@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { getSession } from "next-auth/react"
 import SkillsInput from "@/app/components/SkillTags"
 
@@ -197,6 +197,7 @@ function PreviewCard({
 export default function EditProjectPage() {
   const params = useParams<{ projectId: string }>()
   const projectId = params.projectId
+  const router = useRouter()
 
   const [project, setProject] = useState<ProjectDetail | null>(null)
   const [loadError, setLoadError] = useState<{
@@ -234,6 +235,11 @@ export default function EditProjectPage() {
   const [confirmingPublish, setConfirmingPublish] = useState(false)
 
   const [previewOpen, setPreviewOpen] = useState(false)
+  const [confirmingProjectDelete, setConfirmingProjectDelete] = useState(false)
+  const [deletingProject, setDeletingProject] = useState(false)
+  const [projectDeleteError, setProjectDeleteError] = useState<string | null>(
+    null
+  )
   const [candidateName, setCandidateName] = useState<string | null>(null)
 
   useEffect(() => {
@@ -433,6 +439,33 @@ export default function EditProjectPage() {
       )
     } finally {
       setRemovingId(null)
+    }
+  }
+
+  async function handleDeleteProject() {
+    setDeletingProject(true)
+    setProjectDeleteError(null)
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, {
+        method: "DELETE",
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setProjectDeleteError(
+          (data as { error?: string }).error ??
+            "Something went wrong deleting this project. Please try again."
+        )
+        setDeletingProject(false)
+        return
+      }
+
+      router.push("/candidate/projects")
+    } catch {
+      setProjectDeleteError(
+        "Something went wrong deleting this project. Please try again."
+      )
+      setDeletingProject(false)
     }
   }
 
@@ -938,6 +971,66 @@ export default function EditProjectPage() {
           candidateName={candidateName}
         />
       )}
+
+      <hr className="my-7 border-[#D8D3C4]" />
+
+      <section aria-labelledby="delete-project-heading">
+        <h2
+          id="delete-project-heading"
+          className="text-[15px] font-semibold text-[#16231F]"
+          style={serif}
+        >
+          Delete project
+        </h2>
+        <p className="mt-1 text-[12.5px] text-[#16231F]/60">
+          This removes the project, its evidence and its verification for
+          good. It can&apos;t be undone.
+        </p>
+
+        {confirmingProjectDelete ? (
+          <div className="mt-3 flex flex-wrap items-center gap-2 rounded border border-[#A8452E]/40 px-3 py-2.5">
+            <span className="text-[12.5px] text-[#16231F]/70">
+              Delete &ldquo;{project.title}&rdquo; permanently?
+            </span>
+            <button
+              type="button"
+              onClick={handleDeleteProject}
+              disabled={deletingProject}
+              className="rounded border border-[#A8452E] bg-[#A8452E] px-2 py-1 text-[12px] font-medium text-[#F6F4EE] hover:bg-[#A8452E]/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#A8452E] focus-visible:outline-offset-2"
+            >
+              {deletingProject ? "Deleting…" : "Yes, delete"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmingProjectDelete(false)}
+              disabled={deletingProject}
+              className="rounded border border-[#D8D3C4] px-2 py-1 text-[12px] font-medium text-[#16231F]/55 hover:bg-[#16231F]/5 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              setProjectDeleteError(null)
+              setConfirmingProjectDelete(true)
+            }}
+            className="mt-3 rounded border border-[#A8452E] px-3 py-1.5 text-[12.5px] font-medium text-[#A8452E] transition-colors hover:bg-[#A8452E]/10 focus-visible:outline-2 focus-visible:outline-[#A8452E] focus-visible:outline-offset-2"
+          >
+            Delete project
+          </button>
+        )}
+
+        {projectDeleteError && (
+          <div
+            role="alert"
+            className="mt-3 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+          >
+            {projectDeleteError}
+          </div>
+        )}
+      </section>
 
       <Link
         href="/candidate/projects"
