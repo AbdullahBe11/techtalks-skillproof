@@ -283,3 +283,52 @@ export async function PATCH(
     )
   }
 }
+
+// Delete a project. Only the candidate who owns it can delete it.
+// Evidence and reviews are removed by the cascade in the schema.
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ projectId: string }> }
+) {
+  try {
+    const session = await auth()
+    const userId = session?.user?.id
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 })
+    }
+
+    const userRole = (session.user as { role?: string }).role
+
+    if (userRole !== "candidate") {
+      return NextResponse.json(
+        { error: "Only candidates can delete projects." },
+        { status: 403 }
+      )
+    }
+
+    const { projectId } = await params
+
+    // Delete only if this candidate owns the project. Someone else's
+    // project gets the same 404 as a missing one, so IDs can't be probed.
+    const result = await prisma.project.deleteMany({
+      where: {
+        id: projectId,
+        profile: { userId },
+      },
+    })
+
+    if (result.count === 0) {
+      return NextResponse.json({ error: "Project not found." }, { status: 404 })
+    }
+
+    return NextResponse.json({ message: "Project deleted." }, { status: 200 })
+  } catch (error) {
+    console.error("Delete project error:", error)
+
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again." },
+      { status: 500 }
+    )
+  }
+}
