@@ -5,10 +5,12 @@ import Link from "next/link"
 import { signOut } from "next-auth/react"
 
 import { CheckBadge } from "@/app/components/AppShell"
+import { backLinkForRole } from "@/lib/back-link"
 
 type SessionResponse = {
     user?: {
         name?: string | null
+        role?: string | null
     } | null
 }
 
@@ -22,6 +24,7 @@ export default function PublicHeader({
     const [userName, setUserName] = useState<string | null | undefined>(
         undefined
     )
+    const [userRole, setUserRole] = useState<string | null>(null)
 
     useEffect(() => {
         let cancelled = false
@@ -41,6 +44,7 @@ export default function PublicHeader({
 
                 if (!cancelled) {
                     setUserName(data.user?.name ?? null)
+                    setUserRole(data.user?.role ?? null)
                 }
             } catch {
                 if (!cancelled) {
@@ -57,18 +61,20 @@ export default function PublicHeader({
     }, [])
 
     const authenticated = userName !== undefined
+    const backLink = backLinkForRole(userRole)
 
     return (
         <header className="bg-[#16231F] text-[#F6F4EE]">
             <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                    {showBrowseLink && (
+                    {/* Wait for the session so the link never flashes the wrong destination */}
+                    {showBrowseLink && authenticated && (
                         <Link
-                            href="/projects"
+                            href={backLink.href}
                             className="flex items-center gap-1 text-[13px] text-[#F6F4EE]/75 no-underline hover:text-[#F6F4EE] focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2 focus-visible:rounded-sm"
                         >
                             <span aria-hidden="true">←</span>
-                            Browse verified projects
+                            {backLink.label}
                         </Link>
                     )}
 
