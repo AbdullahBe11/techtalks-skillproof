@@ -5,6 +5,8 @@ import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { getSession } from "next-auth/react"
 import SkillsInput from "@/app/components/SkillTags"
+import RubricScores from "@/app/components/RubricScores"
+import type { ScoreSummary } from "@/lib/rubric"
 
 import {
   STATUS_CLASS,
@@ -33,6 +35,7 @@ type ProjectDetail = {
   verificationStatus: VerificationStatus
   reviewerFeedback: string | null
   evidence: Evidence[]
+  scores: ScoreSummary | null
 }
 const serif = { fontFamily: "var(--font-serif, Georgia, serif)" } as const
 
@@ -648,6 +651,11 @@ export default function EditProjectPage() {
     <p className="mt-2 whitespace-pre-wrap text-[13px] leading-6 text-[#16231F]/70">
       {project.reviewerFeedback}
     </p>
+
+    <RubricScores
+      scores={project.verificationStatus === "pending" ? null : project.scores}
+      className="mt-3"
+    />
   </section>
 )}
 

@@ -3,6 +3,7 @@ import { auth } from "@/auth"
 import { VerificationStatus } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 import { verificationBlockReason } from "@/lib/verification"
+import { parseRubricScores } from "@/lib/rubric"
 import { isEmailConfigured, sendEmail } from "@/lib/email"
 import { buildVerificationResultEmail } from "@/lib/verification-result-email"
 import { getAppUrl } from "@/lib/password-reset"
@@ -67,7 +68,7 @@ export async function PATCH(
       )
     }
 
-    const { verificationStatus, reviewerFeedback } = body
+    const { verificationStatus, reviewerFeedback, scores } = body
 
     // Validate verification status
     if (
@@ -94,6 +95,16 @@ export async function PATCH(
     if (typeof reviewerFeedback !== "string") {
       return NextResponse.json(
         { error: "reviewerFeedback must be a string." },
+        { status: 400 }
+      )
+    }
+
+    // TS-49: every rubric criterion must be scored (1-5)
+    const parsedScores = parseRubricScores(scores)
+
+    if (!parsedScores.ok) {
+      return NextResponse.json(
+        { error: parsedScores.error },
         { status: 400 }
       )
     }
@@ -151,19 +162,47 @@ export async function PATCH(
       return NextResponse.json({ error: blockReason }, { status: 403 })
     }
 
-    // Update verification status and feedback
-    const updatedProject = await prisma.project.update({
-      where: {
-        id: projectId,
-      },
-      data: {
-        verificationStatus:
-          verificationStatus as VerificationStatus,
-        reviewerFeedback,
-        verifiedById: verifierId,
-        verifiedAt: new Date(),
-      },
-    })
+    // Save the decision and this verifier's rubric scores together,
+    // so a project never ends up with a decision but no scores (TS-49).
+    const updatedProject = await prisma.$transaction(async (tx) => {
+      const updated = await tx.project.update({
+        where: {
+          id: projectId,
+        },
+        data: {
+          verificationStatus:
+            verificationStatus as VerificationStatus,
+          reviewerFeedback,
+          verifiedById: verifierId,
+          verifiedAt: new Date(),
+        },
+      })
+
+      const review = await tx.review.upsert({
+        where: {
+          projectId_userId: { projectId, userId: verifierId },
+        },
+        create: {
+          projectId,
+          userId: verifierId,
+          verified: verificationStatus === "verified",
+        },
+        update: {
+          verified: verificationStatus === "verified",
+        },
+      })
+
+      await tx.reviewScore.deleteMany({ where: { reviewId: review.id } })
+      await tx.reviewScore.createMany({
+        data: parsedScores.scores.map((s) => ({
+          reviewId: review.id,
+          criterionId: s.criterionId,
+          score: s.score,
+        })),
+      })
+
+      return updated
+    }, { maxWait: 10000, timeout: 15000 })
 
     // TS-64:
     // Only email the candidate when the verification status

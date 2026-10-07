@@ -7,6 +7,8 @@ import { useParams } from "next/navigation"
 import EmptyState from "@/app/components/EmptyState"
 import { CheckBadge } from "@/app/components/AppShell"
 import PublicHeader from "@/app/components/PublicHeader"
+import RubricScores from "@/app/components/RubricScores"
+import type { ScoreSummary } from "@/lib/rubric"
 import { isSafeExternalUrl } from "@/lib/validation"
 import { SkillChips } from "@/app/components/SkillTags"
 
@@ -30,6 +32,7 @@ type CandidateProject = {
     name: string | null
   } | null
   evidence: CandidateEvidence[]
+  scores: ScoreSummary | null
 }
 
 type CandidateProfile = {
@@ -218,6 +221,7 @@ function ProjectRow({
               ? `Verified · ${formatDate(project.verifiedAt)}`
               : "Verified"}
         </p>
+        <RubricScores scores={project.scores} className="mt-1" />
         {project.description && (
           <p className="line-clamp-2 text-[13px] leading-relaxed text-[#16231F]/60">
             {project.description}
