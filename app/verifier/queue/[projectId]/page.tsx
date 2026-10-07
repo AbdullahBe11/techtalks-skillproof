@@ -5,6 +5,7 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { isSafeExternalUrl } from "@/lib/validation"
+import { RUBRIC_CRITERIA, SCORE_MAX, SCORE_MIN } from "@/lib/rubric"
 
 type EvidenceType = "github" | "demo" | "documentation" | "other"
 type VerificationStatus = "pending" | "verified" | "rejected"
@@ -324,6 +325,7 @@ export default function VerifierReviewPage() {
   } | null>(null)
 
   const [feedback, setFeedback] = useState("")
+  const [scores, setScores] = useState<Record<string, number>>({})
   const [submitting, setSubmitting] = useState<Outcome | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [phase, setPhase] = useState<"form" | "exiting" | "result">("form")
@@ -368,11 +370,12 @@ export default function VerifierReviewPage() {
     }
   }, [projectId])
 
-  const hasFeedback = feedback.trim().length > 0
-  const buttonsDisabled = !hasFeedback || submitting !== null
+  const allScored = RUBRIC_CRITERIA.every((c) => scores[c.id] !== undefined)
+  const canDecide = feedback.trim().length > 0 && allScored
+  const buttonsDisabled = !canDecide || submitting !== null
 
   async function handleDecision(next: Outcome) {
-    if (!hasFeedback || submitting !== null) return
+    if (!canDecide || submitting !== null) return
 
     setSubmitError(null)
     setSubmitting(next)
@@ -384,6 +387,7 @@ export default function VerifierReviewPage() {
         body: JSON.stringify({
           verificationStatus: next,
           reviewerFeedback: feedback.trim(),
+          scores,
         }),
       })
 
@@ -540,7 +544,62 @@ export default function VerifierReviewPage() {
             Decision
           </h2>
 
-          <div className="mt-3">
+          <fieldset className="mt-3" disabled={submitting !== null}>
+            <legend className={labelClass}>
+              Rubric scores ({SCORE_MIN} = weak, {SCORE_MAX} = excellent)
+            </legend>
+            <div className="mt-1 flex flex-col gap-3">
+              {RUBRIC_CRITERIA.map((criterion) => (
+                <div
+                  key={criterion.id}
+                  role="radiogroup"
+                  aria-label={criterion.name}
+                  className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <p className="text-[13px] font-medium text-[#16231F]">
+                      {criterion.name}
+                    </p>
+                    <p className="text-[12px] text-[#16231F]/55">
+                      {criterion.description}
+                    </p>
+                  </div>
+                  <div className="flex gap-1.5">
+                    {Array.from(
+                      { length: SCORE_MAX - SCORE_MIN + 1 },
+                      (_, i) => SCORE_MIN + i
+                    ).map((value) => {
+                      const selected = scores[criterion.id] === value
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          role="radio"
+                          aria-checked={selected}
+                          aria-label={`${criterion.name}: ${value}`}
+                          onClick={() =>
+                            setScores((prev) => ({
+                              ...prev,
+                              [criterion.id]: value,
+                            }))
+                          }
+                          className={`h-8 w-8 rounded border text-[13px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 disabled:cursor-not-allowed ${
+                            selected
+                              ? "border-[#2F6F52] bg-[#2F6F52] text-[#F6F4EE]"
+                              : "border-[#D8D3C4] text-[#16231F]/70 hover:bg-[#16231F]/5"
+                          }`}
+                        >
+                          {value}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <div className="mt-4">
             <label htmlFor="feedback" className={labelClass}>
               Feedback
             </label>
@@ -570,8 +629,8 @@ export default function VerifierReviewPage() {
               onClick={() => handleDecision("verified")}
               disabled={buttonsDisabled}
               style={{
-                opacity: hasFeedback ? 1 : 0.4,
-                pointerEvents: hasFeedback ? "auto" : "none",
+                opacity: canDecide ? 1 : 0.4,
+                pointerEvents: canDecide ? "auto" : "none",
                 transition: `opacity ${buttonDuration}ms cubic-bezier(0.23, 1, 0.32, 1)`,
               }}
               className="rounded bg-[#2F6F52] px-4 py-2.5 text-[14px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#2F6F52]/90 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
@@ -590,8 +649,8 @@ export default function VerifierReviewPage() {
               onClick={() => handleDecision("rejected")}
               disabled={buttonsDisabled}
               style={{
-                opacity: hasFeedback ? 1 : 0.4,
-                pointerEvents: hasFeedback ? "auto" : "none",
+                opacity: canDecide ? 1 : 0.4,
+                pointerEvents: canDecide ? "auto" : "none",
                 transition: `opacity ${buttonDuration}ms cubic-bezier(0.23, 1, 0.32, 1)`,
               }}
               className="rounded border border-[#A8452E] px-4 py-2.5 text-[14px] font-medium text-[#A8452E] transition-colors hover:bg-[#A8452E]/10 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-[#A8452E] focus-visible:outline-offset-2"
