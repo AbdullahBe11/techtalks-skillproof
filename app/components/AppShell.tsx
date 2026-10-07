@@ -46,7 +46,10 @@ const ROLE_NAV_LINKS: Record<string, NavLink[]> = {
     { label: "My profile", href: "/candidate/profile" },
     { label: "Interested recruiters", href: "/candidate/interests" },
   ],
-  recruiter: [{ label: "Browse candidates", href: "/recruiter/browse" }],
+  recruiter: [
+  { label: "Browse candidates", href: "/recruiter/browse" },
+  { label: "My shortlist", href: "/recruiter/shortlist" },
+],
   verifier: [{ label: "Review queue", href: "/verifier/queue" }],
 }
 
