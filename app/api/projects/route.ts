@@ -70,6 +70,7 @@ export async function GET() {
       title: project.title,
       description: project.description,
       publishedState: project.publishedState,
+      verificationStatus: project.verificationStatus,
       createdAt: project.createdAt,
       skills: project.skills,
       evidenceCount: project._count.evidence,
