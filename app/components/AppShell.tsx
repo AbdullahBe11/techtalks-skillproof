@@ -73,23 +73,24 @@ export default function AppShell({ role, userName, children }: AppShellProps) {
   return (
     <div className="min-h-screen flex flex-col bg-[#F6F4EE] text-[#16231F]">
       <header className="bg-[#16231F] text-[#F6F4EE]">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center justify-between sm:justify-start sm:gap-8">
+        {/* Mobile: logo + sign out on the first row, nav on its own
+            scrollable row below. From sm up: one row, nav next to the logo. */}
+        <div className="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-x-8 gap-y-2">
             <span
-              className="text-lg font-semibold"
+              className="order-1 shrink-0 text-lg font-semibold"
               style={{ fontFamily: "var(--font-serif, serif)" }}
             >
               SkillProof
             </span>
 
-            <nav className="flex gap-5">
+            <nav className="order-3 -mx-4 flex w-[calc(100%+2rem)] gap-5 overflow-x-auto whitespace-nowrap px-4 sm:order-2 sm:mx-0 sm:w-auto sm:flex-1 sm:px-0">
               {links.map((link) => {
                 const active = pathname?.startsWith(link.href)
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`text-sm pb-0.5 border-b focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2 focus-visible:rounded-sm ${
+                    className={`shrink-0 text-sm pb-0.5 border-b focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2 focus-visible:rounded-sm ${
                       active
                         ? "border-[#2F6F52] text-[#F6F4EE]"
                         : "border-transparent text-[#F6F4EE]/70 hover:text-[#F6F4EE]"
@@ -100,14 +101,13 @@ export default function AppShell({ role, userName, children }: AppShellProps) {
                 )
               })}
             </nav>
-          </div>
 
-          <div className="flex items-center justify-between gap-3 sm:justify-end">
+          <div className="order-2 flex shrink-0 items-center gap-3 sm:order-3">
             {/* Role label: plain paper-white text. Green is reserved for
                 "active/verified" state only (see the nav underline above),
                 so it isn't reused here just for identity. */}
             <span
-              className="text-sm text-[#F6F4EE]/85"
+              className="hidden text-sm text-[#F6F4EE]/85 sm:inline"
               style={{ fontFamily: "var(--font-serif, serif)" }}
             >
               {userName ? `${userName} · ` : ""}
