@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { CheckBadge } from "@/app/components/AppShell"
+import ThemeToggle from "@/app/components/ThemeToggle"
 
 const TEAM_EMAIL = "Skillproof512@gmail.com"
 const LAST_UPDATED = "October 2026"
@@ -65,6 +66,7 @@ export default function TermsPage() {
             >
               Sign up
             </Link>
+            <ThemeToggle />
           </nav>
         </div>
       </header>
