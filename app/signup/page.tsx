@@ -38,7 +38,7 @@ const serif = { fontFamily: "var(--font-serif, Georgia, serif)" } as const
 // Small circular checkmark badge — reused for the wordmark, the selected role
 // card, and the rubric bullets in the side panel.
 function CheckBadge({
-  className = "w-5 h-5 bg-[#2F6F52]",
+  className = "w-5 h-5 bg-brand",
   stroke = "#F6F4EE",
   strokeWidth = 2.5,
 }: {
@@ -73,7 +73,7 @@ function Spinner() {
   return (
     <span
       aria-hidden="true"
-      className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#F6F4EE]/35 border-t-[#F6F4EE]"
+      className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-paper/35 border-t-paper"
     />
   )
 }
@@ -193,14 +193,14 @@ if (res.status === 201) {
   }
 
   const inputBase =
-    "w-full rounded border bg-[#F6F4EE] px-3 py-2.5 text-[14px] text-[#16231F] outline-none transition-colors placeholder:text-[#16231F]/35 focus:border-[#2F6F52] focus:ring-1 focus:ring-[#2F6F52]"
+    "w-full rounded border bg-paper px-3 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-brand focus:ring-1 focus:ring-brand"
 
   function inputClass(hasError: boolean) {
-    return `${inputBase} ${hasError ? "border-[#A8452E]" : "border-[#D8D3C4]"}`
+    return `${inputBase} ${hasError ? "border-danger" : "border-line"}`
   }
 
-  const labelClass = "block text-[13px] font-medium text-[#16231F]/70 mb-1"
-  const fieldErrorClass = "mt-1 text-[12.5px] text-[#A8452E]"
+  const labelClass = "block text-[13px] font-medium text-ink/70 mb-1"
+  const fieldErrorClass = "mt-1 text-[12.5px] text-danger"
 
   // Cosmetic password-strength meter — derived from the current value on every
   // render, so it updates live as the user types. Does not affect validation.
@@ -208,35 +208,35 @@ if (res.status === 201) {
   let pwFill = 0
   let pwBarClass = ""
   let pwLabel = "Type a password to see its strength"
-  let pwLabelClass = "text-[#16231F]/55"
+  let pwLabelClass = "text-ink/55"
   if (password.length > 0) {
     if (pwScore <= 1) {
       pwFill = 1
-      pwBarClass = "bg-[#A8452E]"
+      pwBarClass = "bg-danger"
       pwLabel = "Weak — try adding numbers or a symbol"
-      pwLabelClass = "text-[#A8452E]"
+      pwLabelClass = "text-danger"
     } else if (pwScore === 2) {
       pwFill = 2
-      pwBarClass = "bg-[#B8862F]"
+      pwBarClass = "bg-warn"
       pwLabel = "Okay — a bit longer would help"
-      pwLabelClass = "text-[#B8862F]"
+      pwLabelClass = "text-warn"
     } else {
       pwFill = 3
-      pwBarClass = "bg-[#2F6F52]"
+      pwBarClass = "bg-brand"
       pwLabel = "Strong"
-      pwLabelClass = "text-[#2F6F52]"
+      pwLabelClass = "text-brand"
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F6F4EE] px-4 py-10">
+    <div className="min-h-screen flex items-center justify-center bg-paper px-4 py-10">
       <div
-        className={`w-full max-h-[90vh] overflow-hidden rounded-md border border-[#D8D3C4] shadow-sm ${
+        className={`w-full max-h-[90vh] overflow-hidden rounded-md border border-line shadow-sm ${
           isDesktop ? "flex max-w-4xl" : "flex flex-col max-w-[400px]"
         }`}
       >
         {isDesktop && (
-          <aside className="flex w-1/2 shrink-0 flex-col justify-between overflow-hidden bg-[#16231F] p-7 text-[#F6F4EE]">
+          <aside className="chrome flex w-1/2 shrink-0 ... bg-ink p-7 text-paper">
             <div>
               <div className="flex items-center gap-2">
                 <CheckBadge />
@@ -246,32 +246,32 @@ if (res.status === 201) {
               </div>
 
               <blockquote
-                className="mt-6 text-[22px] leading-snug text-[#F6F4EE]"
+                className="mt-6 text-[22px] leading-snug text-paper"
                 style={serif}
               >
                 &ldquo;A one-page resume doesn&rsquo;t prove{" "}
-                <span className="text-[#6FAE8E]">
+                <span className="text-brand-light">
                   what I can actually build
                 </span>
                 .&rdquo;
               </blockquote>
-              <p className="mt-3 text-[13px] text-[#F6F4EE]/55">
+              <p className="mt-3 text-[13px] text-paper/55">
                 — from early candidate research
               </p>
             </div>
 
-            <div className="mt-5 border-t border-[#F6F4EE]/15 pt-3.5">
-              <p className="text-xs tracking-wide text-[#F6F4EE]/50">
+            <div className="mt-5 border-t border-paper/15 pt-3.5">
+              <p className="text-xs tracking-wide text-paper/50">
                 EVERY PROJECT IS SCORED ON
               </p>
               <ul className="mt-2 flex flex-col gap-1.5">
                 {["Code quality", "Ownership", "Communication"].map((item) => (
                   <li
                     key={item}
-                    className="flex items-center gap-2.5 text-[14px] text-[#F6F4EE]/90"
+                    className="flex items-center gap-2.5 text-[14px] text-paper/90"
                   >
                     <CheckBadge
-                      className="w-4 h-4 bg-[#6FAE8E]/15"
+                      className="w-4 h-4 bg-brand-light/15"
                       stroke="#6FAE8E"
                       strokeWidth={3}
                     />
@@ -283,22 +283,22 @@ if (res.status === 201) {
           </aside>
         )}
 
-        <div className="min-h-0 w-full overflow-y-auto bg-[#F6F4EE] p-7 sm:w-1/2">
+        <div className="min-h-0 w-full overflow-y-auto bg-paper p-7 sm:w-1/2">
           <div className="flex items-center justify-center gap-2">
             <CheckBadge />
             <span
-              className="text-[20px] font-semibold text-[#16231F]"
+              className="text-[20px] font-semibold text-ink"
               style={serif}
             >
               SkillProof
             </span>
           </div>
-          <p className="mt-1 text-center text-[13px] text-[#16231F]/55">
+          <p className="mt-1 text-center text-[13px] text-ink/55">
             Verified proof of your real work.
           </p>
         <div className={verificationSent ? "hidden" : ""}>
           <h1
-            className="mt-3.5 text-[18px] font-semibold text-[#16231F]"
+            className="mt-3.5 text-[18px] font-semibold text-ink"
             style={serif}
           >
             Create your account
@@ -307,7 +307,7 @@ if (res.status === 201) {
           {formError && (
             <div
               role="alert"
-              className="mt-4 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+              className="mt-4 rounded border-l-2 border-danger bg-danger/10 px-3 py-2 text-[13px] text-danger"
             >
               {formError}
             </div>
@@ -368,7 +368,7 @@ if (res.status === 201) {
                       {" "}
                       <Link
                         href="/signin"
-                        className="font-medium underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                        className="font-medium underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
                       >
                         Try signing in instead.
                       </Link>
@@ -406,7 +406,7 @@ if (res.status === 201) {
               )}
               <p
                 id="password-hint"
-                className="mt-1 text-[12.5px] text-[#16231F]/55"
+                className="mt-1 text-[12.5px] text-ink/55"
               >
                 At least 8 characters.
               </p>
@@ -417,7 +417,7 @@ if (res.status === 201) {
                     <div
                       key={i}
                       className={`h-1 flex-1 rounded-full ${
-                        i < pwFill ? pwBarClass : "bg-[#D8D3C4]"
+                        i < pwFill ? pwBarClass : "bg-line"
                       }`}
                     />
                   ))}
@@ -434,7 +434,7 @@ if (res.status === 201) {
             <div>
               <label htmlFor="phoneNumber" className={labelClass}>
                 Phone number{" "}
-                <span className="font-normal text-[#16231F]/45">(optional)</span>
+                <span className="font-normal text-ink/45">(optional)</span>
               </label>
               <input
                 id="phoneNumber"
@@ -454,10 +454,10 @@ if (res.status === 201) {
                   return (
                     <label
                       key={opt.value}
-                      className={`relative flex cursor-pointer items-start gap-2.5 rounded border px-3 py-2.5 transition-colors focus-within:ring-1 focus-within:ring-[#2F6F52] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-[#2F6F52] has-[:focus-visible]:outline-offset-2 ${
+                      className={`relative flex cursor-pointer items-start gap-2.5 rounded border px-3 py-2.5 transition-colors focus-within:ring-1 focus-within:ring-brand has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand has-[:focus-visible]:outline-offset-2 ${
                         selected
-                          ? "border-[#2F6F52] bg-[#2F6F52]/5"
-                          : "border-[#D8D3C4] hover:border-[#6FAE8E]"
+                          ? "border-brand bg-brand/5"
+                          : "border-line hover:border-brand-light"
                       }`}
                     >
                       <input
@@ -474,23 +474,23 @@ if (res.status === 201) {
                       />
                       <span
                         className={`mt-0.5 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border ${
-                          selected ? "border-[#2F6F52]" : "border-[#D8D3C4]"
+                          selected ? "border-brand" : "border-line"
                         }`}
                       >
                         {selected && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#2F6F52]" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-brand" />
                         )}
                       </span>
                       <span className="flex flex-col">
                         <span
-                          className="text-[14.5px] font-medium text-[#16231F]"
+                          className="text-[14.5px] font-medium text-ink"
                           style={serif}
                         >
                           {opt.label}
                         </span>
                         <span
                           id={`role-${opt.value}-desc`}
-                          className="text-[12.5px] text-[#16231F]/60"
+                          className="text-[12.5px] text-ink/60"
                         >
                           {opt.description}
                         </span>
@@ -503,29 +503,29 @@ if (res.status === 201) {
                 <p className={fieldErrorClass}>{fieldErrors.role}</p>
               )}
             </fieldset>
-                        <p className="text-[12.5px] text-[#16231F]/60">
+                        <p className="text-[12.5px] text-ink/60">
               Want to verify projects? Email us at{" "}
               <a
                 href={`mailto:${VERIFIER_ACCESS_EMAIL}`}
-                className="font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                className="font-medium text-brand hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
               >
                 {VERIFIER_ACCESS_EMAIL}
               </a>
               .
             </p>
 
-                        <p className="text-[12.5px] leading-5 text-[#16231F]/60">
+                        <p className="text-[12.5px] leading-5 text-ink/60">
               By signing up you agree to our{" "}
               <Link
                 href="/terms"
-                className="font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                className="font-medium text-brand hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
               >
                 Terms
               </Link>{" "}
               and{" "}
               <Link
                 href="/privacy"
-                className="font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                className="font-medium text-brand hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
               >
                 Privacy Policy
               </Link>
@@ -535,7 +535,7 @@ if (res.status === 201) {
             <button
               type="submit"
               disabled={submitting}
-              className="mt-1 w-full rounded bg-[#16231F] py-3 text-[14px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+              className="mt-1 w-full rounded bg-ink py-3 text-[14px] font-medium text-paper transition-colors hover:bg-ink/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2"
             >
               {submitting ? (
                 <span className="inline-flex items-center justify-center gap-2">
@@ -548,11 +548,11 @@ if (res.status === 201) {
             </button>
           </form>
 
-          <p className="mt-5 text-center text-[13px] text-[#16231F]/60">
+          <p className="mt-5 text-center text-[13px] text-ink/60">
             Already have an account?{" "}
             <Link
               href="/signin"
-              className="font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+              className="font-medium text-brand hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
             >
               Sign in
             </Link>
@@ -562,32 +562,32 @@ if (res.status === 201) {
 {verificationSent && (
   <div className="mt-6">
     <h1
-      className="text-[18px] font-semibold text-[#16231F]"
+      className="text-[18px] font-semibold text-ink"
       style={serif}
     >
       Check your inbox to confirm your email
     </h1>
 
-    <p className="mt-3 text-[13px] leading-relaxed text-[#16231F]/70">
+    <p className="mt-3 text-[13px] leading-relaxed text-ink/70">
       We sent a confirmation link to{" "}
-      <span className="font-medium text-[#16231F]">
+      <span className="font-medium text-ink">
         {verificationEmail}
       </span>
       .
     </p>
 
-    <p className="mt-2 text-[13px] leading-relaxed text-[#16231F]/70">
+    <p className="mt-2 text-[13px] leading-relaxed text-ink/70">
       Open the link to activate your account. The link expires in 24 hours.
     </p>
 
-    <p className="mt-4 text-[12.5px] leading-relaxed text-[#16231F]/55">
+    <p className="mt-4 text-[12.5px] leading-relaxed text-ink/55">
       Didn&apos;t get it? Check your spam folder. After you try signing in,
       you can request another confirmation email.
     </p>
 
     <Link
       href="/signin"
-      className="mt-6 block w-full rounded bg-[#16231F] py-3 text-center text-[14px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+      className="mt-6 block w-full rounded bg-ink py-3 text-center text-[14px] font-medium text-paper transition-colors hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2"
     >
       Go to sign in
     </Link>

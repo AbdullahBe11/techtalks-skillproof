@@ -13,14 +13,14 @@ export default function RubricScores({
 
   return (
     <div className={className}>
-      <p className="text-[12px] font-medium text-[#16231F]/70">
+      <p className="text-[12px] font-medium text-ink/70">
         Rubric score: {scores.average.toFixed(1)} / {SCORE_MAX}
       </p>
       <ul className="mt-1 flex flex-wrap gap-1.5" aria-label="Rubric scores">
         {scores.criteria.map((c) => (
           <li
             key={c.id}
-            className="rounded-full border border-[#D8D3C4] px-2 py-0.5 text-[11.5px] text-[#16231F]/65"
+            className="rounded-full border border-line px-2 py-0.5 text-[11.5px] text-ink/65"
           >
             {c.name} {c.score}/{SCORE_MAX}
           </li>

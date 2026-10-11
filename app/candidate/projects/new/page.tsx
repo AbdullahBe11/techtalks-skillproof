@@ -11,20 +11,20 @@ function Spinner() {
   return (
     <span
       aria-hidden="true"
-      className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#F6F4EE]/35 border-t-[#F6F4EE]"
+      className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-paper/35 border-t-paper"
     />
   )
 }
 
 const inputBase =
-  "w-full rounded border bg-[#F6F4EE] px-3 py-2.5 text-[14px] text-[#16231F] outline-none transition-colors placeholder:text-[#16231F]/35 focus:border-[#2F6F52] focus:ring-1 focus:ring-[#2F6F52]"
+  "w-full rounded border bg-paper px-3 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-brand focus:ring-1 focus:ring-brand"
 
 function inputClass(hasError: boolean) {
-  return `${inputBase} ${hasError ? "border-[#A8452E]" : "border-[#D8D3C4]"}`
+  return `${inputBase} ${hasError ? "border-danger" : "border-line"}`
 }
 
-const labelClass = "block text-[13px] font-medium text-[#16231F]/70 mb-1"
-const fieldErrorClass = "mt-1 text-[12.5px] text-[#A8452E]"
+const labelClass = "block text-[13px] font-medium text-ink/70 mb-1"
+const fieldErrorClass = "mt-1 text-[12.5px] text-danger"
 
 export default function NewProjectPage() {
   const router = useRouter()
@@ -81,14 +81,14 @@ export default function NewProjectPage() {
 
   return (
     <main className="max-w-lg">
-      <h1 className="text-[20px] font-semibold text-[#16231F]" style={serif}>
+      <h1 className="text-[20px] font-semibold text-ink" style={serif}>
         New Project
       </h1>
 
       {formError && (
         <div
           role="alert"
-          className="mt-4 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+          className="mt-4 rounded border-l-2 border-danger bg-danger/10 px-3 py-2 text-[13px] text-danger"
         >
           {formError}
         </div>
@@ -126,7 +126,7 @@ export default function NewProjectPage() {
         <div>
           <label htmlFor="description" className={labelClass}>
             Description{" "}
-            <span className="font-normal text-[#16231F]/45">(optional)</span>
+            <span className="font-normal text-ink/45">(optional)</span>
           </label>
           <textarea
             id="description"
@@ -140,7 +140,7 @@ export default function NewProjectPage() {
         <div>
           <label htmlFor="skills" className={labelClass}>
             Skills used{" "}
-            <span className="font-normal text-[#16231F]/45">(optional)</span>
+            <span className="font-normal text-ink/45">(optional)</span>
           </label>
           <SkillsInput
             id="skills"
@@ -154,7 +154,7 @@ export default function NewProjectPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="rounded bg-[#16231F] px-4 py-2.5 text-[14px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+            className="rounded bg-ink px-4 py-2.5 text-[14px] font-medium text-paper transition-colors hover:bg-ink/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2"
           >
             {submitting ? (
               <span className="inline-flex items-center justify-center gap-2">
@@ -167,7 +167,7 @@ export default function NewProjectPage() {
           </button>
           <Link
             href="/candidate/projects"
-            className="text-[13px] font-medium text-[#16231F]/60 hover:text-[#16231F] focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+            className="text-[13px] font-medium text-ink/60 hover:text-ink focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
           >
             Cancel
           </Link>

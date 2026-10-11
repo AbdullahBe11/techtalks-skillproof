@@ -40,20 +40,20 @@ function PageHeader({ count }: { count?: number }) {
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div>
         <h1
-          className="text-[20px] font-semibold text-[#16231F]"
+          className="text-[20px] font-semibold text-ink"
           style={serif}
         >
           My Projects
         </h1>
         {count !== undefined && (
-          <p className="mt-0.5 text-[12.5px] text-[#16231F]/55">
+          <p className="mt-0.5 text-[12.5px] text-ink/55">
             {count} {count === 1 ? "project" : "projects"}
           </p>
         )}
       </div>
       <Link
         href="/candidate/projects/new"
-        className="rounded bg-[#16231F] px-3.5 py-2 text-[13px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+        className="rounded bg-ink px-3.5 py-2 text-[13px] font-medium text-paper transition-colors hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
       >
         + New project
       </Link>
@@ -103,7 +103,7 @@ export default function CandidateProjectsPage() {
         <PageHeader />
         <div
           role="alert"
-          className="mt-4 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+          className="mt-4 rounded border-l-2 border-danger bg-danger/10 px-3 py-2 text-[13px] text-danger"
         >
           {error}
         </div>
@@ -115,7 +115,7 @@ export default function CandidateProjectsPage() {
     return (
       <main>
         <PageHeader />
-        <p className="mt-4 text-[13px] text-[#16231F]/55">Loading…</p>
+        <p className="mt-4 text-[13px] text-ink/55">Loading…</p>
       </main>
     )
   }
@@ -136,21 +136,21 @@ export default function CandidateProjectsPage() {
     <main>
       <PageHeader count={projects.length} />
 
-      <ul className="mt-6 border-t border-[#D8D3C4]">
+      <ul className="mt-6 border-t border-line">
         {projects.map((project) => (
           <li
             key={project.id}
-            className="flex flex-col gap-1.5 border-b border-[#D8D3C4] py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2"
+            className="flex flex-col gap-1.5 border-b border-line py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2"
           >
             <Link
               href={`/candidate/projects/${project.id}`}
-              className="break-words text-[14.5px] font-medium text-[#16231F] no-underline hover:text-[#2F6F52] focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+              className="break-words text-[14.5px] font-medium text-ink no-underline hover:text-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
               style={serif}
             >
               {project.title}
             </Link>
             <div className="flex flex-wrap items-center gap-3">
-              <span className="text-[12.5px] text-[#16231F]/55">
+              <span className="text-[12.5px] text-ink/55">
                 {project.evidenceCount}{" "}
                 {project.evidenceCount === 1
                   ? "evidence link"

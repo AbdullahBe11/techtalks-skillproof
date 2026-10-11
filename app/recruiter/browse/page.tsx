@@ -159,7 +159,7 @@ function CandidateRow({
 
   return (
     <li
-      className="recruiter-candidate-row border-b border-[#D8D3C4]"
+      className="recruiter-candidate-row border-b border-line"
       style={{
         display: "grid",
         gridTemplateRows: expanded ? "1fr" : "0fr",
@@ -171,23 +171,23 @@ function CandidateRow({
         <div className="flex flex-col gap-1.5 py-3.5">
           <Link
             href={`/candidates/${candidate.id}`}
-            className="w-fit break-words text-[14.5px] font-medium text-[#16231F] no-underline hover:underline focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+            className="w-fit break-words text-[14.5px] font-medium text-ink no-underline hover:underline focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2"
             style={serif}
           >
             {candidate.name}
           </Link>
-          <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-[#2F6F52]/25 bg-[#2F6F52]/[0.08] px-2.5 py-1 text-[12px] font-medium text-[#2F6F52]">
-            <CheckBadge className="h-3.5 w-3.5 bg-[#2F6F52]" strokeWidth={3} />
+          <div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-brand/25 bg-brand/[0.08] px-2.5 py-1 text-[12px] font-medium text-brand">
+            <CheckBadge className="h-3.5 w-3.5 bg-brand" strokeWidth={3} />
             {verifiedCount}{" "}
             {verifiedCount === 1 ? "verified project" : "verified projects"}
           </div>
           {candidate.headline && (
-            <p className="break-words text-[13px] font-medium text-[#16231F]/75">
+            <p className="break-words text-[13px] font-medium text-ink/75">
               {candidate.headline}
             </p>
           )}
           {candidate.bio && (
-            <p className="line-clamp-2 text-[13px] leading-relaxed text-[#16231F]/60">
+            <p className="line-clamp-2 text-[13px] leading-relaxed text-ink/60">
               {candidate.bio}
             </p>
           )}
@@ -344,16 +344,16 @@ export default function RecruiterCandidatesPage() {
         }
       `}</style>
 
-      <h1 className="text-[20px] font-semibold text-[#16231F]" style={serif}>
+      <h1 className="text-[20px] font-semibold text-ink" style={serif}>
         Browse candidates
       </h1>
-      <p className="mt-1 text-[13px] text-[#16231F]/55">
+      <p className="mt-1 text-[13px] text-ink/55">
         Verified candidates across SkillProof, searchable by name, title, project keyword
         or skill.
       </p>
 
       <div className="relative mt-5 max-w-md">
-        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#16231F]/40">
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink/40">
           <SearchIcon />
         </span>
         <input
@@ -365,18 +365,18 @@ export default function RecruiterCandidatesPage() {
           }}
           placeholder="Search by name, title, keyword or skill…"
           aria-label="Search verified candidates"
-          className="w-full rounded border border-[#D8D3C4] bg-[#F6F4EE] py-2.5 pl-9 pr-3 text-[14px] text-[#16231F] outline-none transition-colors placeholder:text-[#16231F]/35 focus:border-[#2F6F52] focus:ring-1 focus:ring-[#2F6F52]"
+          className="w-full rounded border border-line bg-paper py-2.5 pl-9 pr-3 text-[14px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-brand focus:ring-1 focus:ring-brand"
         />
       </div>
 
       {activeChipFilter && (
         <div className="mt-2.5">
-          <span className="inline-flex items-center gap-1 rounded-full border border-[#2F6F52]/25 bg-[#2F6F52]/8 py-0.5 pl-2.5 pr-1 text-[12px] text-[#2F6F52]">
+          <span className="inline-flex items-center gap-1 rounded-full border border-brand/25 bg-brand/8 py-0.5 pl-2.5 pr-1 text-[12px] text-brand">
             {activeChipFilter}
             <button
               type="button"
               onClick={handleClearFilter}
-              className="rounded-full px-1 leading-none text-[#2F6F52]/70 hover:text-[#A8452E] focus-visible:outline-2 focus-visible:outline-[#2F6F52]"
+              className="rounded-full px-1 leading-none text-brand/70 hover:text-danger focus-visible:outline-2 focus-visible:outline-brand"
               aria-label={`Clear ${activeChipFilter} filter`}
             >
               ×
@@ -391,7 +391,7 @@ export default function RecruiterCandidatesPage() {
           a region that only just got inserted into the DOM. */}
       <p
         aria-live="polite"
-        className="text-[12.5px] text-[#16231F]/55"
+        className="text-[12.5px] text-ink/55"
         style={{
           marginTop: showCount ? "0.625rem" : 0,
           height: showCount ? "auto" : 0,
@@ -406,7 +406,7 @@ export default function RecruiterCandidatesPage() {
       {error && (
         <div
           role="alert"
-          className="mt-4 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+          className="mt-4 rounded border-l-2 border-danger bg-danger/10 px-3 py-2 text-[13px] text-danger"
         >
           {error}
         </div>
@@ -414,7 +414,7 @@ export default function RecruiterCandidatesPage() {
 
       <p
         aria-live="polite"
-        className="text-[13px] text-[#16231F]/55"
+        className="text-[13px] text-ink/55"
         style={{
           marginTop: showLoading ? "1.5rem" : 0,
           height: showLoading ? "auto" : 0,
@@ -438,7 +438,7 @@ export default function RecruiterCandidatesPage() {
       </div>
 
       {!error && !initialLoading && displayed.length > 0 && (
-        <ul className="mt-6 border-t border-[#D8D3C4]">
+        <ul className="mt-6 border-t border-line">
           {displayed.map((row) => (
             <CandidateRow
               key={row.id}
