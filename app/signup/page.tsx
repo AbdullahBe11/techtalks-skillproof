@@ -265,7 +265,7 @@ if (res.status === 201) {
                 EVERY PROJECT IS SCORED ON
               </p>
               <ul className="mt-2 flex flex-col gap-1.5">
-                {["Code quality", "Ownership", "Communication"].map((item) => (
+                {["Functionality", "Code quality", "Documentation", "Ownership"].map((item) => (
                   <li
                     key={item}
                     className="flex items-center gap-2.5 text-[14px] text-paper/90"
