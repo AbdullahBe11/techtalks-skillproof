@@ -58,7 +58,7 @@ function ResetPasswordForm() {
     return (
       <AuthCard title="Reset link missing">
         <Alert kind="error">This page needs the link from your reset email.</Alert>
-        <p className="mt-5 text-center text-[13px] text-[#16231F]/60">
+        <p className="mt-5 text-center text-[13px] text-ink/60">
           <Link href="/forgot-password" className={linkClass}>
             Request a new reset link
           </Link>
@@ -119,7 +119,7 @@ function ResetPasswordForm() {
         </button>
       </form>
       {error?.includes("expired") && (
-        <p className="mt-5 text-center text-[13px] text-[#16231F]/60">
+        <p className="mt-5 text-center text-[13px] text-ink/60">
           <Link href="/forgot-password" className={linkClass}>
             Request a new reset link
           </Link>

@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react"
 
 import { CheckBadge } from "@/app/components/AppShell"
 import { backLinkForRole } from "@/lib/back-link"
+import ThemeToggle from "@/app/components/ThemeToggle"
 
 type SessionResponse = {
     user?: {
@@ -64,14 +65,14 @@ export default function PublicHeader({
     const backLink = backLinkForRole(userRole)
 
     return (
-        <header className="bg-[#16231F] text-[#F6F4EE]">
+        <header className="chrome bg-ink text-paper">
             <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                     {/* Wait for the session so the link never flashes the wrong destination */}
                     {showBrowseLink && authenticated && (
                         <Link
                             href={backLink.href}
-                            className="flex items-center gap-1 text-[13px] text-[#F6F4EE]/75 no-underline hover:text-[#F6F4EE] focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                            className="flex items-center gap-1 text-[13px] text-paper/75 no-underline hover:text-paper focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2 focus-visible:rounded-sm"
                         >
                             <span aria-hidden="true">←</span>
                             {backLink.label}
@@ -81,7 +82,7 @@ export default function PublicHeader({
                     {authenticated && userRole === "recruiter" && (
                     <Link
                         href="/recruiter/shortlist"
-                        className="flex items-center gap-1 text-[13px] text-[#F6F4EE]/75 no-underline hover:text-[#F6F4EE] focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                        className="flex items-center gap-1 text-[13px] text-paper/75 no-underline hover:text-paper focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2 focus-visible:rounded-sm"
                     >
                         My shortlist
                     </Link>
@@ -102,8 +103,9 @@ export default function PublicHeader({
 
                 {authenticated && userName ? (
                     <div className="flex items-center gap-3">
+                        <ThemeToggle />
                         <span
-                            className="max-w-[220px] truncate text-sm text-[#F6F4EE]/90"
+                            className="max-w-[220px] truncate text-sm text-paper/90"
                             title={userName}
                         >
                             {userName}
@@ -116,7 +118,7 @@ export default function PublicHeader({
                                     callbackUrl: "/",
                                 })
                             }
-                            className="rounded border border-[#F6F4EE]/35 px-2.5 py-1.5 text-sm text-[#F6F4EE] hover:bg-[#F6F4EE]/10 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+                            className="rounded border border-paper/35 px-2.5 py-1.5 text-sm text-paper hover:bg-paper/10 focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2"
                         >
                             Sign out
                         </button>
@@ -124,7 +126,7 @@ export default function PublicHeader({
                 ) : authenticated ? (
                     <Link
                         href="/signin"
-                        className="rounded border border-[#F6F4EE]/35 px-2.5 py-1.5 text-sm text-[#F6F4EE] hover:bg-[#F6F4EE]/10 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+                        className="rounded border border-paper/35 px-2.5 py-1.5 text-sm text-paper hover:bg-paper/10 focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2"
                     >
                         Sign in
                     </Link>

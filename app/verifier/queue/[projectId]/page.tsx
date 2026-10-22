@@ -32,10 +32,10 @@ type Outcome = "verified" | "rejected"
 
 const serif = { fontFamily: "var(--font-serif, Georgia, serif)" } as const
 
-const labelClass = "block text-[13px] font-medium text-[#16231F]/70 mb-1"
+const labelClass = "block text-[13px] font-medium text-ink/70 mb-1"
 
 const inputBase =
-  "w-full rounded border bg-[#F6F4EE] px-3 py-2.5 text-[14px] text-[#16231F] outline-none transition-colors placeholder:text-[#16231F]/35 focus:border-[#2F6F52] focus:ring-1 focus:ring-[#2F6F52]"
+  "w-full rounded border bg-paper px-3 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-brand focus:ring-1 focus:ring-brand"
 
 function subscribeReducedMotion(callback: () => void) {
   const mql = window.matchMedia("(prefers-reduced-motion: reduce)")
@@ -68,7 +68,7 @@ function formatDate(value: string) {
 }
 
 function Spinner({
-  className = "border-[#F6F4EE]/35 border-t-[#F6F4EE]",
+  className = "border-paper/35 border-t-paper",
 }: {
   className?: string
 }) {
@@ -123,7 +123,7 @@ function EvidenceTypeIcon({ type }: { type: EvidenceType }) {
   return (
     <span
       aria-hidden="true"
-      className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2F6F52]/10 text-[#2F6F52]"
+      className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand"
     >
       <svg
         viewBox="0 0 24 24"
@@ -244,7 +244,7 @@ function ResultBadge({
   }, [])
 
   const isApprove = outcome === "verified"
-  const color = isApprove ? "#2F6F52" : "#A8452E"
+  const color = isApprove ? "var(--brand)" : "var(--danger)"
   const duration = reducedMotion ? 1 : 480
   const easing = reducedMotion
     ? "linear"
@@ -293,12 +293,12 @@ function DecisionResult({
     >
       <ResultBadge outcome={outcome} reducedMotion={reducedMotion} />
       <FadeUp delayMs={120} reducedMotion={reducedMotion}>
-        <p className="text-[17px] font-semibold text-[#16231F]" style={serif}>
+        <p className="text-[17px] font-semibold text-ink" style={serif}>
           {isApprove ? "Project verified" : "Project rejected"}
         </p>
       </FadeUp>
       <FadeUp delayMs={180} reducedMotion={reducedMotion}>
-        <p className="max-w-[280px] text-[13px] text-[#16231F]/60">
+        <p className="max-w-[280px] text-[13px] text-ink/60">
           {isApprove
             ? "The candidate will see this project marked as verified, along with your feedback."
             : "The candidate will see this project marked as rejected, along with your feedback."}
@@ -306,7 +306,7 @@ function DecisionResult({
       </FadeUp>
       <Link
         href="/verifier/queue"
-        className="mt-2 text-[13px] font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+        className="mt-2 text-[13px] font-medium text-brand hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
       >
         ← Back to review queue
       </Link>
@@ -419,7 +419,7 @@ export default function VerifierReviewPage() {
       <main>
         <div
           role="alert"
-          className="rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2.5 text-[13px] text-[#A8452E]"
+          className="rounded border-l-2 border-danger bg-danger/10 px-3 py-2.5 text-[13px] text-danger"
         >
           {loadError.status === 404
             ? "This project doesn't exist."
@@ -429,7 +429,7 @@ export default function VerifierReviewPage() {
         </div>
         <Link
           href="/verifier/queue"
-          className="mt-4 inline-block text-[13px] font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+          className="mt-4 inline-block text-[13px] font-medium text-brand hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
         >
           ← Back to review queue
         </Link>
@@ -440,7 +440,7 @@ export default function VerifierReviewPage() {
   if (!project) {
     return (
       <main>
-        <p className="text-[13px] text-[#16231F]/55">Loading…</p>
+        <p className="text-[13px] text-ink/55">Loading…</p>
       </main>
     )
   }
@@ -452,40 +452,40 @@ export default function VerifierReviewPage() {
   return (
     <main className="max-w-2xl">
       <h1
-        className="break-words text-[20px] font-semibold text-[#16231F]"
+        className="break-words text-[20px] font-semibold text-ink"
         style={serif}
       >
         {project.title}
       </h1>
-      <p className="mt-1 text-[12.5px] text-[#16231F]/55">
+      <p className="mt-1 text-[12.5px] text-ink/55">
         Submitted by {project.candidateName} · {formatDate(project.createdAt)}
       </p>
 
-      <p className="mt-1 text-[12px] text-[#16231F]/50">
+      <p className="mt-1 text-[12px] text-ink/50">
         Your name will be shown publicly on projects you verify.
       </p>
 
       {project.description && (
-        <p className="mt-3 text-[14px] leading-relaxed text-[#16231F]/80">
+        <p className="mt-3 text-[14px] leading-relaxed text-ink/80">
           {project.description}
         </p>
       )}
 
       {project.verificationStatus !== "pending" && (
-        <div className="mt-4 rounded border border-[#D8D3C4] bg-[#16231F]/[0.03] px-3 py-2.5 text-[12.5px] text-[#16231F]/70">
+        <div className="mt-4 rounded border border-line bg-ink/[0.03] px-3 py-2.5 text-[12.5px] text-ink/70">
           Already {project.verificationStatus === "verified" ? "verified" : "rejected"}
           {project.reviewerFeedback ? ` — "${project.reviewerFeedback}"` : ""}
         </div>
       )}
 
-      <hr className="my-6 border-[#D8D3C4]" />
+      <hr className="my-6 border-line" />
 
-      <h2 className="text-[16px] font-semibold text-[#16231F]" style={serif}>
+      <h2 className="text-[16px] font-semibold text-ink" style={serif}>
         Evidence
       </h2>
 
       {project.evidence.length === 0 ? (
-        <p className="mt-3 text-[13px] text-[#16231F]/55">
+        <p className="mt-3 text-[13px] text-ink/55">
           No evidence links provided.
         </p>
       ) : (
@@ -496,7 +496,7 @@ export default function VerifierReviewPage() {
               className="flex min-w-0 items-center gap-2.5 text-[13.5px]"
             >
               <EvidenceTypeIcon type={ev.type} />
-              <span className="shrink-0 text-[11px] font-medium capitalize text-[#16231F]/65">
+              <span className="shrink-0 text-[11px] font-medium capitalize text-ink/65">
                 {ev.type}
               </span>
               {isSafeExternalUrl(ev.evidenceUrl) ? (
@@ -504,16 +504,16 @@ export default function VerifierReviewPage() {
                   href={ev.evidenceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="min-w-0 flex-1 truncate text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                  className="min-w-0 flex-1 truncate text-brand hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
                 >
                   {ev.shortLabel}
                 </a>
               ) : (
                 // Older evidence saved before URLs were checked: never make an
                 // unsafe link clickable.
-                <span className="min-w-0 flex-1 truncate text-[#16231F]/60">
+                <span className="min-w-0 flex-1 truncate text-ink/60">
                   {ev.shortLabel}{" "}
-                  <span className="text-[11.5px] text-[#A8452E]">
+                  <span className="text-[11.5px] text-danger">
                     (link hidden: not an http/https URL)
                   </span>
                 </span>
@@ -523,7 +523,7 @@ export default function VerifierReviewPage() {
         </ul>
       )}
 
-      <hr className="my-6 border-[#D8D3C4]" />
+      <hr className="my-6 border-line" />
 
       {phase !== "result" && project.verificationStatus === "pending" && (
         <div
@@ -538,7 +538,7 @@ export default function VerifierReviewPage() {
           }}
         >
           <h2
-            className="text-[16px] font-semibold text-[#16231F]"
+            className="text-[16px] font-semibold text-ink"
             style={serif}
           >
             Decision
@@ -557,10 +557,10 @@ export default function VerifierReviewPage() {
                   className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div>
-                    <p className="text-[13px] font-medium text-[#16231F]">
+                    <p className="text-[13px] font-medium text-ink">
                       {criterion.name}
                     </p>
-                    <p className="text-[12px] text-[#16231F]/55">
+                    <p className="text-[12px] text-ink/55">
                       {criterion.description}
                     </p>
                   </div>
@@ -583,10 +583,10 @@ export default function VerifierReviewPage() {
                               [criterion.id]: value,
                             }))
                           }
-                          className={`h-8 w-8 rounded border text-[13px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 disabled:cursor-not-allowed ${
+                          className={`h-8 w-8 rounded border text-[13px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 disabled:cursor-not-allowed ${
                             selected
-                              ? "border-[#2F6F52] bg-[#2F6F52] text-[#F6F4EE]"
-                              : "border-[#D8D3C4] text-[#16231F]/70 hover:bg-[#16231F]/5"
+                              ? "border-brand bg-brand text-paper"
+                              : "border-line text-ink/70 hover:bg-ink/5"
                           }`}
                         >
                           {value}
@@ -608,7 +608,7 @@ export default function VerifierReviewPage() {
               rows={5}
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
-              className={`${inputBase} border-[#D8D3C4]`}
+              className={`${inputBase} border-line`}
               placeholder="Share what you found, and why you're approving or rejecting this project…"
               disabled={submitting !== null}
             />
@@ -617,7 +617,7 @@ export default function VerifierReviewPage() {
           {submitError && (
             <div
               role="alert"
-              className="mt-3 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+              className="mt-3 rounded border-l-2 border-danger bg-danger/10 px-3 py-2 text-[13px] text-danger"
             >
               {submitError}
             </div>
@@ -633,11 +633,11 @@ export default function VerifierReviewPage() {
                 pointerEvents: canDecide ? "auto" : "none",
                 transition: `opacity ${buttonDuration}ms cubic-bezier(0.23, 1, 0.32, 1)`,
               }}
-              className="rounded bg-[#2F6F52] px-4 py-2.5 text-[14px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#2F6F52]/90 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+              className="rounded bg-brand px-4 py-2.5 text-[14px] font-medium text-paper transition-colors hover:bg-brand/90 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
             >
               {submitting === "verified" ? (
                 <span className="inline-flex items-center justify-center gap-2">
-                  <Spinner className="border-[#F6F4EE]/35 border-t-[#F6F4EE]" />
+                  <Spinner className="border-paper/35 border-t-paper" />
                   Approving…
                 </span>
               ) : (
@@ -653,11 +653,11 @@ export default function VerifierReviewPage() {
                 pointerEvents: canDecide ? "auto" : "none",
                 transition: `opacity ${buttonDuration}ms cubic-bezier(0.23, 1, 0.32, 1)`,
               }}
-              className="rounded border border-[#A8452E] px-4 py-2.5 text-[14px] font-medium text-[#A8452E] transition-colors hover:bg-[#A8452E]/10 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-[#A8452E] focus-visible:outline-offset-2"
+              className="rounded border border-danger px-4 py-2.5 text-[14px] font-medium text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-danger focus-visible:outline-offset-2"
             >
               {submitting === "rejected" ? (
                 <span className="inline-flex items-center justify-center gap-2">
-                  <Spinner className="border-[#A8452E]/35 border-t-[#A8452E]" />
+                  <Spinner className="border-danger/35 border-t-danger" />
                   Rejecting…
                 </span>
               ) : (
@@ -675,7 +675,7 @@ export default function VerifierReviewPage() {
       {phase !== "result" && (
         <Link
           href="/verifier/queue"
-          className="mt-6 inline-block text-[13px] font-medium text-[#16231F]/60 hover:text-[#16231F] focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+          className="mt-6 inline-block text-[13px] font-medium text-ink/60 hover:text-ink focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
         >
           ← Back to review queue
         </Link>

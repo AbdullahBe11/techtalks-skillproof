@@ -4,4 +4,4 @@
 export const PENDING_LABEL = "Pending"
 
 export const PENDING_CLASS =
-  "bg-[#B8862F]/10 text-[#B8862F] border-[#B8862F]/30"
+  "bg-warn/10 text-warn border-warn/30"

@@ -38,7 +38,7 @@ export default function RemoveButton({
       onClick={handleRemove}
       disabled={status === "loading"}
       aria-label={`Remove ${name} from shortlist`}
-      className="rounded border border-[#D8D3C4] bg-white/30 px-3 py-1.5 text-[12px] font-medium text-[#16231F] transition-colors hover:bg-white/60 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+      className="rounded border border-line bg-wash/30 px-3 py-1.5 text-[12px] font-medium text-ink transition-colors hover:bg-wash/60 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
     >
       {status === "loading" ? "Removing…" : "Remove"}
     </button>

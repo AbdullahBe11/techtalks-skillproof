@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
       {sentMessage ? (
         <>
           <Alert kind="success">{sentMessage}</Alert>
-          <p className="mt-3 text-[13px] text-[#16231F]/60">
+          <p className="mt-3 text-[13px] text-ink/60">
             Didn&apos;t get it? Check your spam folder, or try again in a minute.
           </p>
         </>
@@ -72,7 +72,7 @@ export default function ForgotPasswordPage() {
           </form>
         </>
       )}
-      <p className="mt-5 text-center text-[13px] text-[#16231F]/60">
+      <p className="mt-5 text-center text-[13px] text-ink/60">
         Remembered it?{" "}
         <Link href="/signin" className={linkClass}>
           Back to sign in

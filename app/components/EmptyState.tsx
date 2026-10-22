@@ -11,8 +11,8 @@ type EmptyStateProps = {
 // middle. Shares the badge container styling with the wordmark's checkmark,
 // but doesn't borrow its meaning: an empty list isn't a verification state.
 function EmptyIcon({
-  className = "w-8 h-8 mb-1 bg-[#2F6F52]/[0.08] border border-[#2F6F52]/25",
-  stroke = "#2F6F52",
+  className = "w-8 h-8 mb-1 bg-brand/[0.08] border border-brand/25",
+  stroke = "var(--brand)",
   strokeWidth = 2.5,
 }: {
   className?: string
@@ -50,18 +50,18 @@ export default function EmptyState({
     <div className="flex flex-col items-center gap-2.5 py-12 px-6 text-center">
       <EmptyIcon />
       <div
-        className="font-medium text-[14.5px] text-[#16231F]"
+        className="font-medium text-[14.5px] text-ink"
         style={{ fontFamily: "var(--font-serif, Georgia, serif)" }}
       >
         {headline}
       </div>
-      <div className="text-[12.5px] text-[#6b6b5f] max-w-[220px] leading-relaxed">
+      <div className="text-[12.5px] text-ink/55 max-w-[220px] leading-relaxed">
         {description}
       </div>
       {ctaLabel && ctaHref && (
         <Link
           href={ctaHref}
-          className="mt-1.5 text-[12.5px] text-[#2F6F52] font-medium border-b border-[#6FAE8E] pb-px no-underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+          className="mt-1.5 text-[12.5px] text-brand font-medium border-b border-brand-light pb-px no-underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
         >
           {ctaLabel}
         </Link>

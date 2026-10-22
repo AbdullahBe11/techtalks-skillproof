@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut } from "next-auth/react"
+import ThemeToggle from "@/app/components/ThemeToggle"
 
 type NavLink = {
   label: string
@@ -12,7 +13,7 @@ type NavLink = {
 // Small circular checkmark badge — shared with the sign-in/sign-up wordmark
 // and side panels, and the EmptyState component, so the SVG isn't duplicated.
 export function CheckBadge({
-  className = "w-5 h-5 bg-[#2F6F52]",
+  className = "w-5 h-5 bg-brand",
   stroke = "#F6F4EE",
   strokeWidth = 2.5,
 }: {
@@ -71,8 +72,8 @@ export default function AppShell({ role, userName, children }: AppShellProps) {
   const roleLabel = ROLE_LABELS[role] ?? role
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F6F4EE] text-[#16231F]">
-      <header className="bg-[#16231F] text-[#F6F4EE]">
+    <div className="min-h-screen flex flex-col bg-paper text-ink">
+      <header className="chrome bg-ink text-paper">
         {/* Mobile: logo + sign out on the first row, nav on its own
             scrollable row below. From sm up: one row, nav next to the logo. */}
         <div className="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-x-8 gap-y-2">
@@ -90,10 +91,10 @@ export default function AppShell({ role, userName, children }: AppShellProps) {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`shrink-0 text-sm pb-0.5 border-b focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2 focus-visible:rounded-sm ${
+                    className={`shrink-0 text-sm pb-0.5 border-b focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2 focus-visible:rounded-sm ${
                       active
-                        ? "border-[#2F6F52] text-[#F6F4EE]"
-                        : "border-transparent text-[#F6F4EE]/70 hover:text-[#F6F4EE]"
+                        ? "border-brand text-paper"
+                        : "border-transparent text-paper/70 hover:text-paper"
                     }`}
                   >
                     {link.label}
@@ -107,7 +108,7 @@ export default function AppShell({ role, userName, children }: AppShellProps) {
                 "active/verified" state only (see the nav underline above),
                 so it isn't reused here just for identity. */}
             <span
-              className="hidden text-sm text-[#F6F4EE]/85 sm:inline"
+              className="hidden text-sm text-paper/85 sm:inline"
               style={{ fontFamily: "var(--font-serif, serif)" }}
             >
               {userName ? `${userName} · ` : ""}
@@ -117,9 +118,10 @@ export default function AppShell({ role, userName, children }: AppShellProps) {
             {/* Sign-out as a small outlined button, not underlined text —
                 gives it its own visual weight so it doesn't blend with the
                 faded inactive nav links next to it. */}
+            <ThemeToggle />
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="text-xs border border-[#F6F4EE]/35 rounded px-2.5 py-1.5 text-[#F6F4EE] hover:bg-[#F6F4EE]/10 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+              className="text-xs border border-paper/35 rounded px-2.5 py-1.5 text-paper hover:bg-paper/10 focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2"
             >
               Sign out
             </button>
