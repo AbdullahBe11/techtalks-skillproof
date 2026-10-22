@@ -23,6 +23,7 @@ Built during the **TechTalks internship (Next.js track)**.
 - Public profile page showing verified projects: **"Verified by [name] · [date]"**
 - "Interested recruiters" page, plus an email when a recruiter shows interest
 - Email when a project is verified or rejected
+- Delete a project (with its evidence and verification)
 
 ### Verifiers
 - Review queue of pending projects that have evidence
@@ -32,13 +33,18 @@ Built during the **TechTalks internship (Next.js track)**.
 ### Recruiters
 - Browse and search verified candidates by skill, name, headline or bio (flexible matching, e.g. "nextjs" finds "Next.js")
 - Express interest, which unlocks the candidate's contact email
-- Shortlist candidates
+- Shortlist candidates and manage them from a "My shortlist" page
 
 ### Accounts & security
 - Sign up as candidate or recruiter, with email verification
 - Forgot password / reset by email link
 - Verification resets automatically when a project's content or evidence changes
 - Evidence links limited to http(s) to protect verifiers
+- Privacy policy and terms pages, linked from sign-up and the footer
+
+### Interface
+- Light and dark mode with a header toggle (follows the device setting by default)
+- Responsive layout for mobile and desktop
 
 ### Out of scope for V1
 - AI-assisted grading, employer challenges, payments, automated matching
@@ -447,6 +453,9 @@ Candidate's contact info is shared with that recruiter
 * [x] Verifier review flow with named verifiers and team-approved verifier accounts
 * [x] Recruiter discovery, search, interest and shortlist
 * [x] Email notifications (interest, verification result)
+* [x] Verifier rubric scoring (4 criteria) shown on public profiles
+* [x] Project deletion, recruiter "My shortlist" page, privacy and terms pages
+* [x] Dark mode and mobile layout fixes
 * [x] Automated tests and CI
 * [x] Deployment on Vercel
 
@@ -454,10 +463,9 @@ Candidate's contact info is shared with that recruiter
 
 * [ ] Profile picture and CV upload
 * [ ] Work experience on profiles
-* [ ] Candidates can delete projects
-* [ ] Recruiter "My shortlist" page
-* [ ] Sign-in attempt limits
-* [ ] Privacy policy and terms pages
+* [ ] Sign-in attempt limits (TS-67)
+* [ ] Separate development and production databases
+* [ ] Route-level tests for every authorization rule
 
 
 ---
