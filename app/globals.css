@@ -1,26 +1,57 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --paper: #f6f4ee;
+  --ink: #16231f;
+  --line: #d8d3c4;
+  --brand: #2f6f52;
+  --brand-light: #6fae8e;
+  --danger: #a8452e;
+  --wash: #ffffff;
+  --warn: #b8862f;
+  --info: #3d5a73;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0f1613;
+  --ink: #ece8dc;
+  --line: #2b3832;
+  --brand: #4c9b77;
+  --brand-light: #6fae8e;
+  --danger: #e58a72;
+  --wash: #22302a;
+  --warn: #d4a24c;
+  --info: #7fa3c2;
+}
+
+/* Surfaces that stay dark in both themes (headers, dark panels, CTA block).
+   Re-pins the inverting tokens so text-paper / bg-ink keep their light-mode look. */
+.chrome {
+  --paper: #f6f4ee;
+  --ink: #16231f;
+  --wash: #ffffff;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-light: var(--brand-light);
+  --color-danger: var(--danger);
+  --color-wash: var(--wash);
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-warn: var(--warn);
+  --color-info: var(--info);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
   font-family: Arial, Helvetica, sans-serif;
 }

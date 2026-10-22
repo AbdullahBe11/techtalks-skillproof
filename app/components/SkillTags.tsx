@@ -13,7 +13,7 @@ export function SkillChips({
 }) {
   if (skills.length === 0) return null
   const chipClass =
-    "rounded-full border border-[#2F6F52]/25 bg-[#2F6F52]/8 px-2 py-0.5 text-[11.5px] text-[#2F6F52]"
+    "rounded-full border border-brand/25 bg-brand/8 px-2 py-0.5 text-[11.5px] text-brand"
   return (
     <ul className="flex flex-wrap gap-1.5" aria-label="Skills">
       {skills.map((skill) => (
@@ -22,7 +22,7 @@ export function SkillChips({
             <button
               type="button"
               onClick={() => onSelect(skill)}
-              className={`${chipClass} hover:bg-[#2F6F52]/15 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-1`}
+              className={`${chipClass} hover:bg-brand/15 focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-1`}
             >
               {skill}
             </button>
@@ -82,13 +82,13 @@ export default function SkillsInput({
           {value.map((skill) => (
             <li
               key={skill}
-              className="inline-flex items-center gap-1 rounded-full border border-[#2F6F52]/25 bg-[#2F6F52]/8 py-0.5 pl-2 pr-1 text-[12px] text-[#2F6F52]"
+              className="inline-flex items-center gap-1 rounded-full border border-brand/25 bg-brand/8 py-0.5 pl-2 pr-1 text-[12px] text-brand"
             >
               {skill}
               <button
                 type="button"
                 onClick={() => onChange(value.filter((s) => s !== skill))}
-                className="rounded-full px-1 leading-none text-[#2F6F52]/70 hover:text-[#A8452E] focus-visible:outline-2 focus-visible:outline-[#2F6F52]"
+                className="rounded-full px-1 leading-none text-brand/70 hover:text-danger focus-visible:outline-2 focus-visible:outline-brand"
                 aria-label={`Remove ${skill}`}
               >
                 ×
@@ -127,7 +127,7 @@ export default function SkillsInput({
         className={inputClassName}
         aria-describedby={`${id}-help`}
       />
-      <p id={`${id}-help`} className="mt-1 text-[12px] text-[#16231F]/50">
+      <p id={`${id}-help`} className="mt-1 text-[12px] text-ink/50">
         {hint ?? `Press Enter or comma to add. Up to ${MAX_SKILLS} skills.`}
       </p>
     </div>

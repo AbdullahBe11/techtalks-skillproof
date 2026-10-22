@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { CheckBadge } from "@/app/components/AppShell"
+import ThemeToggle from "@/app/components/ThemeToggle"
 
 const TEAM_EMAIL = "Skillproof512@gmail.com"
 const LAST_UPDATED = "October 2026"
@@ -21,10 +22,10 @@ function Section({
 }) {
   return (
     <section className="mt-10">
-      <h2 className="text-[22px] font-semibold text-[#16231F]" style={serif}>
+      <h2 className="text-[22px] font-semibold text-ink" style={serif}>
         {title}
       </h2>
-      <div className="mt-3 flex flex-col gap-3 text-[14.5px] leading-7 text-[#16231F]/75">
+      <div className="mt-3 flex flex-col gap-3 text-[14.5px] leading-7 text-ink/75">
         {children}
       </div>
     </section>
@@ -33,12 +34,12 @@ function Section({
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-[#F6F4EE] text-[#16231F]">
-      <header className="border-b border-[#D8D3C4] bg-[#F6F4EE]">
+    <main className="min-h-screen bg-paper text-ink">
+      <header className="border-b border-line bg-paper">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
           <Link
             href="/"
-            className="flex items-center gap-2 no-underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-4"
+            className="flex items-center gap-2 no-underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-4"
           >
             <CheckBadge />
             <span className="text-[20px] font-semibold" style={serif}>
@@ -49,28 +50,29 @@ export default function TermsPage() {
           <nav className="flex items-center gap-3">
             <Link
               href="/privacy"
-              className="rounded px-3 py-2 text-[13px] font-medium text-[#16231F]/70 transition-colors hover:text-[#16231F] focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+              className="rounded px-3 py-2 text-[13px] font-medium text-ink/70 transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
             >
               Privacy
             </Link>
             <Link
               href="/signin"
-              className="rounded px-3 py-2 text-[13px] font-medium text-[#16231F]/70 transition-colors hover:text-[#16231F] focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+              className="rounded px-3 py-2 text-[13px] font-medium text-ink/70 transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
             >
               Sign in
             </Link>
             <Link
               href="/signup"
-              className="rounded bg-[#16231F] px-3.5 py-2 text-[13px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+              className="rounded bg-ink px-3.5 py-2 text-[13px] font-medium text-paper transition-colors hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
             >
               Sign up
             </Link>
+            <ThemeToggle />
           </nav>
         </div>
       </header>
 
       <article className="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
-        <p className="text-[12px] font-medium uppercase tracking-[0.14em] text-[#16231F]/45">
+        <p className="text-[12px] font-medium uppercase tracking-[0.14em] text-ink/45">
           Legal
         </p>
         <h1
@@ -79,11 +81,11 @@ export default function TermsPage() {
         >
           Terms of Service
         </h1>
-        <p className="mt-3 text-[13px] text-[#16231F]/55">
+        <p className="mt-3 text-[13px] text-ink/55">
           Last updated: {LAST_UPDATED}
         </p>
 
-        <p className="mt-6 text-[15px] leading-7 text-[#16231F]/75">
+        <p className="mt-6 text-[15px] leading-7 text-ink/75">
           These are the basic rules for using SkillProof. By creating an
           account or using the platform, you agree to them.
         </p>
@@ -150,7 +152,7 @@ export default function TermsPage() {
             Reach the team at{" "}
             <a
               href={`mailto:${TEAM_EMAIL}`}
-              className="font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+              className="font-medium text-brand hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
             >
               {TEAM_EMAIL}
             </a>
@@ -159,14 +161,14 @@ export default function TermsPage() {
         </Section>
       </article>
 
-      <footer className="border-t border-[#D8D3C4] px-5 py-6 sm:px-8">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 text-[12px] text-[#16231F]/50 sm:flex-row sm:items-center sm:justify-between">
+      <footer className="border-t border-line px-5 py-6 sm:px-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 text-[12px] text-ink/50 sm:flex-row sm:items-center sm:justify-between">
           <span>SkillProof</span>
           <div className="flex gap-4">
-            <Link href="/privacy" className="hover:text-[#16231F]">
+            <Link href="/privacy" className="hover:text-ink">
               Privacy
             </Link>
-            <Link href="/terms" className="hover:text-[#16231F]">
+            <Link href="/terms" className="hover:text-ink">
               Terms
             </Link>
           </div>

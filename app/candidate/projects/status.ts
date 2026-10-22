@@ -7,9 +7,9 @@ export const STATUS_LABEL: Record<ProjectStatus, string> = {
 }
 
 export const STATUS_CLASS: Record<ProjectStatus, string> = {
-  draft: "bg-[#B8862F]/10 text-[#B8862F] border-[#B8862F]/30",
-  published: "bg-[#3D5A73]/10 text-[#3D5A73] border-[#3D5A73]/30",
-  archived: "bg-[#16231F]/5 text-[#16231F]/55 border-[#D8D3C4]",
+  draft: "bg-warn/10 text-warn border-warn/30",
+  published: "bg-info/10 text-info border-info/30",
+  archived: "bg-ink/5 text-ink/55 border-line",
 }
 
 export type VerificationStatus = "pending" | "verified" | "rejected"
@@ -28,9 +28,9 @@ export const VERIFICATION_STATUS_CLASS: Record<
   string
 > = {
   pending:
-    "bg-[#B8862F]/10 text-[#B8862F] border-[#B8862F]/30",
+    "bg-warn/10 text-warn border-warn/30",
   verified:
-    "bg-[#2F6F52]/10 text-[#2F6F52] border-[#2F6F52]/30",
+    "bg-brand/10 text-brand border-brand/30",
   rejected:
-    "bg-[#A8452E]/10 text-[#A8452E] border-[#A8452E]/30",
+    "bg-danger/10 text-danger border-danger/30",
 }

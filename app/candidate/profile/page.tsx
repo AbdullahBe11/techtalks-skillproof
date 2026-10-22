@@ -46,9 +46,9 @@ const LINK_FIELDS: {
 
 const serif = { fontFamily: "var(--font-serif, Georgia, serif)" } as const
 
-const labelClass = "block text-[13px] font-medium text-[#16231F]/70 mb-1"
+const labelClass = "block text-[13px] font-medium text-ink/70 mb-1"
 const inputClass =
-  "w-full rounded border border-[#D8D3C4] bg-[#F6F4EE] px-3 py-2.5 text-[14px] text-[#16231F] outline-none transition-colors placeholder:text-[#16231F]/35 focus:border-[#2F6F52] focus:ring-1 focus:ring-[#2F6F52]"
+  "w-full rounded border border-line bg-paper px-3 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-brand focus:ring-1 focus:ring-brand"
 
 function toForm(profile: Profile): FormState {
   return {
@@ -142,24 +142,24 @@ export default function CandidateProfilePage() {
   return (
     <main className="max-w-xl">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-[20px] font-semibold text-[#16231F]" style={serif}>
+        <h1 className="text-[20px] font-semibold text-ink" style={serif}>
           My Profile
         </h1>
         {userId && (
           <Link
             href={`/candidates/${userId}`}
-            className="text-[13px] font-medium text-[#2F6F52] no-underline hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+            className="text-[13px] font-medium text-brand no-underline hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
           >
             View public profile →
           </Link>
         )}
       </div>
-      <p className="mt-0.5 text-[12.5px] text-[#16231F]/55">
+      <p className="mt-0.5 text-[12.5px] text-ink/55">
         This is what recruiters see next to your verified projects.
       </p>
 
       {loading ? (
-        <p role="status" className="mt-6 text-[13px] text-[#16231F]/55">
+        <p role="status" className="mt-6 text-[13px] text-ink/55">
           Loading…
         </p>
       ) : (
@@ -192,13 +192,13 @@ export default function CandidateProfilePage() {
               onChange={(e) => update("bio", e.target.value)}
               className={`${inputClass} resize-y`}
             />
-            <p className="mt-1 text-right text-[11.5px] text-[#16231F]/45">
+            <p className="mt-1 text-right text-[11.5px] text-ink/45">
               {form.bio.length}/{BIO_MAX_LENGTH}
             </p>
           </div>
 
           <fieldset className="flex flex-col gap-3">
-            <legend className="mb-1 text-[13px] font-semibold text-[#16231F]">
+            <legend className="mb-1 text-[13px] font-semibold text-ink">
               Links
             </legend>
             {LINK_FIELDS.map((field) => (
@@ -222,13 +222,13 @@ export default function CandidateProfilePage() {
           {error && (
             <div
               role="alert"
-              className="rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+              className="rounded border-l-2 border-danger bg-danger/10 px-3 py-2 text-[13px] text-danger"
             >
               {error}
             </div>
           )}
           {saved && (
-            <p role="status" className="text-[13px] font-medium text-[#2F6F52]">
+            <p role="status" className="text-[13px] font-medium text-brand">
               Profile saved ✓
             </p>
           )}
@@ -236,7 +236,7 @@ export default function CandidateProfilePage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-fit rounded bg-[#16231F] px-4 py-2.5 text-[13px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+            className="w-fit rounded bg-ink px-4 py-2.5 text-[13px] font-medium text-paper transition-colors hover:bg-ink/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
           >
             {saving ? "Saving…" : "Save profile"}
           </button>

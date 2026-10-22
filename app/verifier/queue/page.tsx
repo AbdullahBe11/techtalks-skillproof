@@ -36,11 +36,11 @@ function PendingTag() {
 function PageHeader({ count }: { count?: number }) {
   return (
     <div>
-      <h1 className="text-[20px] font-semibold text-[#16231F]" style={serif}>
+      <h1 className="text-[20px] font-semibold text-ink" style={serif}>
         Review Queue
       </h1>
       {count !== undefined && (
-        <p className="mt-0.5 text-[12.5px] text-[#16231F]/55">
+        <p className="mt-0.5 text-[12.5px] text-ink/55">
           {count} {count === 1 ? "project" : "projects"} awaiting review
         </p>
       )}
@@ -90,7 +90,7 @@ export default function VerifierQueuePage() {
         <PageHeader />
         <div
           role="alert"
-          className="mt-4 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+          className="mt-4 rounded border-l-2 border-danger bg-danger/10 px-3 py-2 text-[13px] text-danger"
         >
           {error}
         </div>
@@ -102,7 +102,7 @@ export default function VerifierQueuePage() {
     return (
       <main>
         <PageHeader />
-        <p className="mt-4 text-[13px] text-[#16231F]/55">Loading…</p>
+        <p className="mt-4 text-[13px] text-ink/55">Loading…</p>
       </main>
     )
   }
@@ -123,21 +123,21 @@ export default function VerifierQueuePage() {
     <main>
       <PageHeader count={projects.length} />
 
-      <ul className="mt-6 border-t border-[#D8D3C4]">
+      <ul className="mt-6 border-t border-line">
         {projects.map((project) => (
           <li
             key={project.id}
-            className="flex flex-col gap-1.5 border-b border-[#D8D3C4] py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2"
+            className="flex flex-col gap-1.5 border-b border-line py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2"
           >
             <div className="min-w-0">
               <Link
                 href={`/verifier/queue/${project.id}`}
-                className="break-words text-[14.5px] font-medium text-[#16231F] no-underline hover:text-[#2F6F52] focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                className="break-words text-[14.5px] font-medium text-ink no-underline hover:text-brand focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
                 style={serif}
               >
                 {project.title}
               </Link>
-              <p className="mt-0.5 text-[12.5px] text-[#16231F]/55">
+              <p className="mt-0.5 text-[12.5px] text-ink/55">
                 {project.candidateName} · Submitted{" "}
                 {formatDate(project.createdAt)}
               </p>

@@ -16,10 +16,10 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 function PageHeader({ count }: { count?: number }) {
   return (
     <div>
-      <h1 className="text-[20px] font-semibold text-[#16231F]" style={serif}>
+      <h1 className="text-[20px] font-semibold text-ink" style={serif}>
         Interested Recruiters
       </h1>
-      <p className="mt-0.5 text-[12.5px] text-[#16231F]/55">
+      <p className="mt-0.5 text-[12.5px] text-ink/55">
         {count === undefined
           ? "Recruiters who want to get in touch about your verified work."
           : `${count} ${count === 1 ? "recruiter" : "recruiters"} interested in you`}
@@ -75,7 +75,7 @@ export default function CandidateInterestsPage() {
         <PageHeader />
         <div
           role="alert"
-          className="mt-4 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+          className="mt-4 rounded border-l-2 border-danger bg-danger/10 px-3 py-2 text-[13px] text-danger"
         >
           {error}
         </div>
@@ -87,7 +87,7 @@ export default function CandidateInterestsPage() {
     return (
       <main>
         <PageHeader />
-        <p role="status" className="mt-4 text-[13px] text-[#16231F]/55">
+        <p role="status" className="mt-4 text-[13px] text-ink/55">
           Loading…
         </p>
       </main>
@@ -112,27 +112,27 @@ export default function CandidateInterestsPage() {
     <main>
       <PageHeader count={recruiters.length} />
 
-      <ul className="mt-6 border-t border-[#D8D3C4]">
+      <ul className="mt-6 border-t border-line">
         {recruiters.map((recruiter) => (
           <li
             key={`${recruiter.recruiterEmail}-${recruiter.createdAt}`}
-            className="flex flex-col gap-1.5 border-b border-[#D8D3C4] py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+            className="flex flex-col gap-1.5 border-b border-line py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
           >
             <div className="min-w-0">
               <p
-                className="break-words text-[14.5px] font-medium text-[#16231F]"
+                className="break-words text-[14.5px] font-medium text-ink"
                 style={serif}
               >
                 {recruiter.recruiterName}
               </p>
               <a
                 href={`mailto:${recruiter.recruiterEmail}`}
-                className="break-all text-[13px] text-[#2F6F52] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                className="break-all text-[13px] text-brand underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
               >
                 {recruiter.recruiterEmail}
               </a>
             </div>
-            <span className="shrink-0 text-[12.5px] text-[#16231F]/55">
+            <span className="shrink-0 text-[12.5px] text-ink/55">
               Interested since{" "}
               {dateFormatter.format(new Date(recruiter.createdAt))}
             </span>

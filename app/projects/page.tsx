@@ -138,7 +138,7 @@ function ResultRow({
 
   return (
     <li
-      className="public-project-row border-b border-[#D8D3C4]"
+      className="public-project-row border-b border-line"
       style={{
         display: "grid",
         gridTemplateRows: expanded ? "1fr" : "0fr",
@@ -150,22 +150,22 @@ function ResultRow({
         <div className="flex flex-col gap-1 py-3.5">
           <Link
             href={`/candidates/${project.candidateId}`}
-            className="w-fit break-words text-[14.5px] font-medium text-[#16231F] no-underline hover:underline focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+            className="w-fit break-words text-[14.5px] font-medium text-ink no-underline hover:underline focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2"
             style={serif}
           >
             {project.title}
           </Link>
-          <div className="flex items-center gap-1.5 text-[12.5px] text-[#16231F]/70">
-            <CheckBadge className="h-4 w-4 bg-[#2F6F52]" strokeWidth={3} />
+          <div className="flex items-center gap-1.5 text-[12.5px] text-ink/70">
+            <CheckBadge className="h-4 w-4 bg-brand" strokeWidth={3} />
             <Link
               href={`/candidates/${project.candidateId}`}
-              className="text-[#16231F]/70 no-underline hover:underline focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+              className="text-ink/70 no-underline hover:underline focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2"
             >
               {project.candidateName}
             </Link>
           </div>
           {project.description && (
-            <p className="line-clamp-2 text-[13px] leading-relaxed text-[#16231F]/60">
+            <p className="line-clamp-2 text-[13px] leading-relaxed text-ink/60">
               {project.description}
             </p>
           )}
@@ -299,7 +299,7 @@ export default function PublicProjectsPage() {
   const showLoading = !error && initialLoading
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#F6F4EE] text-[#16231F]">
+    <div className="flex min-h-screen flex-col bg-paper text-ink">
       <style>{`
         @media (hover: hover) and (pointer: fine) {
           .public-project-row:hover {
@@ -311,15 +311,15 @@ export default function PublicProjectsPage() {
       <PublicHeader />
 
       <main className="mx-auto w-full max-w-5xl flex-1 overflow-x-hidden px-4 py-8">
-        <h1 className="text-[22px] font-semibold text-[#16231F]" style={serif}>
+        <h1 className="text-[22px] font-semibold text-ink" style={serif}>
           Browse verified projects
         </h1>
-        <p className="mt-1 text-[13px] text-[#16231F]/55">
+        <p className="mt-1 text-[13px] text-ink/55">
           Real, verified work from candidates across SkillProof.
         </p>
 
         <div className="relative mt-5 max-w-md">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#16231F]/40">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink/40">
             <SearchIcon />
           </span>
           <input
@@ -328,7 +328,7 @@ export default function PublicProjectsPage() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by title, keyword, or skill…"
             aria-label="Search verified projects"
-            className="w-full rounded border border-[#D8D3C4] bg-[#F6F4EE] py-2.5 pl-9 pr-3 text-[14px] text-[#16231F] outline-none transition-colors placeholder:text-[#16231F]/35 focus:border-[#2F6F52] focus:ring-1 focus:ring-[#2F6F52]"
+            className="w-full rounded border border-line bg-paper py-2.5 pl-9 pr-3 text-[14px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-brand focus:ring-1 focus:ring-brand"
           />
         </div>
 
@@ -338,7 +338,7 @@ export default function PublicProjectsPage() {
             a region that only just got inserted into the DOM. */}
         <p
           aria-live="polite"
-          className="text-[12.5px] text-[#16231F]/55"
+          className="text-[12.5px] text-ink/55"
           style={{
             marginTop: showCount ? "0.625rem" : 0,
             height: showCount ? "auto" : 0,
@@ -353,7 +353,7 @@ export default function PublicProjectsPage() {
         {error && (
           <div
             role="alert"
-            className="mt-4 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+            className="mt-4 rounded border-l-2 border-danger bg-danger/10 px-3 py-2 text-[13px] text-danger"
           >
             {error}
           </div>
@@ -361,7 +361,7 @@ export default function PublicProjectsPage() {
 
         <p
           aria-live="polite"
-          className="text-[13px] text-[#16231F]/55"
+          className="text-[13px] text-ink/55"
           style={{
             marginTop: showLoading ? "1.5rem" : 0,
             height: showLoading ? "auto" : 0,
@@ -385,7 +385,7 @@ export default function PublicProjectsPage() {
         </div>
 
         {!error && !initialLoading && displayed.length > 0 && (
-          <ul className="mt-6 border-t border-[#D8D3C4]">
+          <ul className="mt-6 border-t border-line">
             {displayed.map((row) => (
               <ResultRow
                 key={row.id}

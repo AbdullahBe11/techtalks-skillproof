@@ -24,7 +24,7 @@ const serif = { fontFamily: "var(--font-serif, Georgia, serif)" } as const
 
 // Small circular checkmark badge — reused for the wordmark and the side panel.
 function CheckBadge({
-  className = "w-5 h-5 bg-[#2F6F52]",
+  className = "w-5 h-5 bg-brand",
   stroke = "#F6F4EE",
   strokeWidth = 2.5,
 }: {
@@ -59,7 +59,7 @@ function Spinner() {
   return (
     <span
       aria-hidden="true"
-      className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#F6F4EE]/35 border-t-[#F6F4EE]"
+      className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-paper/35 border-t-paper"
     />
   )
 }
@@ -220,24 +220,24 @@ async function handleResend() {
   }
 
   const inputBase =
-    "w-full rounded border bg-[#F6F4EE] px-3 py-2.5 text-[14px] text-[#16231F] outline-none transition-colors placeholder:text-[#16231F]/35 focus:border-[#2F6F52] focus:ring-1 focus:ring-[#2F6F52]"
+    "w-full rounded border bg-paper px-3 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-ink/35 focus:border-brand focus:ring-1 focus:ring-brand"
 
   function inputClass(hasError: boolean) {
-    return `${inputBase} ${hasError ? "border-[#A8452E]" : "border-[#D8D3C4]"}`
+    return `${inputBase} ${hasError ? "border-danger" : "border-line"}`
   }
 
-  const labelClass = "block text-[13px] font-medium text-[#16231F]/70 mb-1"
-  const fieldErrorClass = "mt-1 text-[12.5px] text-[#A8452E]"
+  const labelClass = "block text-[13px] font-medium text-ink/70 mb-1"
+  const fieldErrorClass = "mt-1 text-[12.5px] text-danger"
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F6F4EE] px-4 py-10">
+    <div className="min-h-screen flex items-center justify-center bg-paper px-4 py-10">
       <div
-        className={`w-full max-h-[90vh] overflow-hidden rounded-md border border-[#D8D3C4] shadow-sm ${
+        className={`w-full max-h-[90vh] overflow-hidden rounded-md border border-line shadow-sm ${
           isDesktop ? "flex max-w-4xl" : "flex flex-col max-w-[400px]"
         }`}
       >
         {isDesktop && (
-          <aside className="flex w-1/2 shrink-0 flex-col justify-between overflow-hidden bg-[#16231F] p-7 text-[#F6F4EE]">
+          <aside className="chrome flex w-1/2 shrink-0 flex-col justify-between overflow-hidden bg-ink p-7 text-paper">
             <div>
               <div className="flex items-center gap-2">
                 <CheckBadge />
@@ -247,47 +247,47 @@ async function handleResend() {
               </div>
 
               <p
-                className="mt-6 text-[22px] leading-snug text-[#F6F4EE]"
+                className="mt-6 text-[22px] leading-snug text-paper"
                 style={serif}
               >
                 Your work is{" "}
-                <span className="text-[#6FAE8E]">already speaking for you</span>.
+                <span className="text-brand-light">already speaking for you</span>.
               </p>
-              <p className="mt-3 text-[13px] text-[#F6F4EE]/55">
+              <p className="mt-3 text-[13px] text-paper/55">
                 Sign back in to pick up where you left off.
               </p>
             </div>
 
-            <div className="mt-5 border-t border-[#F6F4EE]/15 pt-3.5">
+            <div className="mt-5 border-t border-paper/15 pt-3.5">
               <p
-                className="text-[44px] font-semibold text-[#6FAE8E]"
+                className="text-[44px] font-semibold text-brand-light"
                 style={serif}
               >
                 100%
               </p>
-              <p className="mt-1 text-[13px] text-[#F6F4EE]/70">
+              <p className="mt-1 text-[13px] text-paper/70">
                 of scores are reviewed by a named, human verifier
               </p>
             </div>
           </aside>
         )}
 
-        <div className="min-h-0 w-full overflow-y-auto bg-[#F6F4EE] p-7 sm:w-1/2">
+        <div className="min-h-0 w-full overflow-y-auto bg-paper p-7 sm:w-1/2">
           <div className="flex items-center justify-center gap-2">
             <CheckBadge />
             <span
-              className="text-[20px] font-semibold text-[#16231F]"
+              className="text-[20px] font-semibold text-ink"
               style={serif}
             >
               SkillProof
             </span>
           </div>
-          <p className="mt-1 text-center text-[13px] text-[#16231F]/55">
+          <p className="mt-1 text-center text-[13px] text-ink/55">
             Verified proof of your real work.
           </p>
 
           <h1
-            className="mt-3.5 text-[18px] font-semibold text-[#16231F]"
+            className="mt-3.5 text-[18px] font-semibold text-ink"
             style={serif}
           >
             Sign in
@@ -296,7 +296,7 @@ async function handleResend() {
           {formError && (
             <div
               role="alert"
-              className="mt-4 rounded border-l-2 border-[#A8452E] bg-[#A8452E]/10 px-3 py-2 text-[13px] text-[#A8452E]"
+              className="mt-4 rounded border-l-2 border-danger bg-danger/10 px-3 py-2 text-[13px] text-danger"
             >
               {formError}
             </div>
@@ -307,7 +307,7 @@ async function handleResend() {
       type="button"
       onClick={handleResend}
       disabled={resending}
-      className="w-full rounded border border-[#2F6F52] bg-[#F6F4EE] py-2.5 text-[13px] font-medium text-[#2F6F52] transition-colors hover:bg-[#2F6F52]/5 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2"
+      className="w-full rounded border border-brand bg-paper py-2.5 text-[13px] font-medium text-brand transition-colors hover:bg-brand/5 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2"
     >
       {resending ? "Sending…" : "Resend email"}
     </button>
@@ -315,7 +315,7 @@ async function handleResend() {
     {resendMessage && (
       <p
         role="status"
-        className="mt-2 text-[12.5px] leading-relaxed text-[#2F6F52]"
+        className="mt-2 text-[12.5px] leading-relaxed text-brand"
       >
         {resendMessage}
       </p>
@@ -357,12 +357,12 @@ async function handleResend() {
 
             <div>
               <div className="mb-1 flex items-baseline justify-between">
-                <label htmlFor="password" className="block text-[13px] font-medium text-[#16231F]/70">
+                <label htmlFor="password" className="block text-[13px] font-medium text-ink/70">
                   Password
                 </label>
                 <Link
                   href="/forgot-password"
-                  className="text-[12.5px] font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                  className="text-[12.5px] font-medium text-brand hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
                 >
                   Forgot password?
                 </Link>
@@ -392,7 +392,7 @@ async function handleResend() {
             <button
               type="submit"
               disabled={submitting}
-              className="mt-1 w-full rounded bg-[#16231F] py-3 text-[14px] font-medium text-[#F6F4EE] transition-colors hover:bg-[#16231F]/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-[#6FAE8E] focus-visible:outline-offset-2"
+              className="mt-1 w-full rounded bg-ink py-3 text-[14px] font-medium text-paper transition-colors hover:bg-ink/90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-brand-light focus-visible:outline-offset-2"
             >
               {submitting ? (
                 <span className="inline-flex items-center justify-center gap-2">
@@ -405,11 +405,11 @@ async function handleResend() {
             </button>
           </form>
 
-          <p className="mt-5 text-center text-[13px] text-[#16231F]/60">
+          <p className="mt-5 text-center text-[13px] text-ink/60">
             New to SkillProof?{" "}
             <Link
               href="/signup"
-              className="font-medium text-[#2F6F52] hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+              className="font-medium text-brand hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
             >
               Create an account
             </Link>

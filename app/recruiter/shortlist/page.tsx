@@ -44,7 +44,7 @@ export default async function ShortlistPage() {
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 overflow-x-hidden px-4 py-8">
       <h1
-        className="text-[22px] font-semibold text-[#16231F]"
+        className="text-[22px] font-semibold text-ink"
         style={{ fontFamily: "var(--font-serif, Georgia, serif)" }}
       >
         My shortlist
@@ -60,25 +60,25 @@ export default async function ShortlistPage() {
           {candidates.map((c) => (
             <li
               key={c.id}
-              className="flex flex-col gap-3 rounded border border-[#D8D3C4] bg-white/30 p-4 sm:flex-row sm:items-start sm:justify-between"
+              className="flex flex-col gap-3 rounded border border-line bg-wash/30 p-4 sm:flex-row sm:items-start sm:justify-between"
             >
               <div className="min-w-0">
                 <Link
                   href={c.profileUrl}
-                  className="break-words text-[15px] font-medium text-[#2F6F52] no-underline hover:underline focus-visible:outline-2 focus-visible:outline-[#2F6F52] focus-visible:outline-offset-2 focus-visible:rounded-sm"
+                  className="break-words text-[15px] font-medium text-brand no-underline hover:underline focus-visible:outline-2 focus-visible:outline-brand focus-visible:outline-offset-2 focus-visible:rounded-sm"
                 >
                   {c.name}
                 </Link>
 
                 {c.headline && (
-                  <p className="mt-0.5 break-words text-[13.5px] text-[#16231F]/70">
+                  <p className="mt-0.5 break-words text-[13.5px] text-ink/70">
                     {c.headline}
                   </p>
                 )}
 
-                <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-[#2F6F52]/25 bg-[#2F6F52]/[0.08] px-2.5 py-1 text-[12px] font-medium text-[#2F6F52]">
+                <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-brand/25 bg-brand/[0.08] px-2.5 py-1 text-[12px] font-medium text-brand">
                   <CheckBadge
-                    className="h-3.5 w-3.5 bg-[#2F6F52]"
+                    className="h-3.5 w-3.5 bg-brand"
                     strokeWidth={3}
                   />
                   {c.verifiedProjectCount}{" "}

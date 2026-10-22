@@ -145,8 +145,8 @@ function VerifyEmailForm() {
         title="Confirming your email"
         subtitle="Please wait while we verify your confirmation link."
       >
-        <div className="mt-5 h-1 w-full overflow-hidden rounded bg-[#D8D3C4]">
-          <div className="h-full w-1/2 animate-pulse rounded bg-[#2F6F52]" />
+        <div className="mt-5 h-1 w-full overflow-hidden rounded bg-line">
+          <div className="h-full w-1/2 animate-pulse rounded bg-brand" />
         </div>
       </AuthCard>
     )
@@ -179,7 +179,7 @@ function VerifyEmailForm() {
     >
       {error && <Alert kind="error">{error}</Alert>}
 
-      <p className="mt-3 text-[13px] leading-relaxed text-[#16231F]/60">
+      <p className="mt-3 text-[13px] leading-relaxed text-ink/60">
         Enter your email below and we&apos;ll send you a fresh
         confirmation link.
       </p>
@@ -224,7 +224,7 @@ function VerifyEmailForm() {
         </button>
       </form>
 
-      <p className="mt-5 text-center text-[13px] text-[#16231F]/60">
+      <p className="mt-5 text-center text-[13px] text-ink/60">
         <Link href="/signin" className={linkClass}>
           Back to sign in
         </Link>
