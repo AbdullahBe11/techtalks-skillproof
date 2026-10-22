@@ -236,7 +236,7 @@ if (res.status === 201) {
         }`}
       >
         {isDesktop && (
-          <aside className="chrome flex w-1/2 shrink-0 ... bg-ink p-7 text-paper">
+          <aside className="chrome flex w-1/2 shrink-0 flex-col justify-between overflow-hidden bg-ink p-7 text-paper">
             <div>
               <div className="flex items-center gap-2">
                 <CheckBadge />

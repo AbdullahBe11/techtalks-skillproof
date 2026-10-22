@@ -151,7 +151,7 @@ function PreviewCard({
 }) {
   return (
     <div className="mt-3 max-w-full overflow-hidden rounded border border-line">
-      <div className="chrome flex flex-wrap items-center ... bg-ink px-4 py-2.5 text-paper">
+      <div className="chrome flex flex-wrap items-center justify-between gap-2 bg-ink px-4 py-2.5 text-paper">
         <span className="font-mono text-[11px] tracking-wide text-paper/55">
           /profile/preview
         </span>
