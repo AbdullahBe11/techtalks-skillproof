@@ -120,7 +120,7 @@ cp .env.example .env
 npx prisma migrate deploy
 ```
 
-> ⚠️ Our local and production environments currently share **one** database. Never run `prisma migrate dev`, `prisma migrate reset` or `npm run seed` against it, and never answer "yes" to a reset prompt. See [DEPLOYMENT.md](./DEPLOYMENT.md).
+> ⚠️ Our local and production environments currently share **one** database. Never run `prisma migrate dev` or `prisma migrate reset` against it, and never answer "yes" to a reset prompt. See [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ### Run the app
 
