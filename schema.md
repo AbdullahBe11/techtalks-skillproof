@@ -1,6 +1,6 @@
 # SkillProof — Database Schema
 
-**Status:** Approved for Sprint 01 (schema sign-off required from Jamela, Jaafar, Abdallah Khodor before code lands)
+**Status:** Implemented. The live schema is `prisma/schema.prisma`; this document explains the design.
 **Engine:** PostgreSQL
 **ORM:** Prisma
 
